@@ -1,0 +1,9 @@
+python-dotenv
+streamlit
+pandas
+numpy
+scikit-learn
+rank-bm25
+sentence-transformers
+faiss-cpu
+

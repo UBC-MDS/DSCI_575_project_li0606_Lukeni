@@ -1,0 +1,16 @@
+name: dsci575-ml
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10
+  - pip
+  - pip:
+      - python-dotenv
+      - streamlit
+      - pandas
+      - numpy
+      - scikit-learn
+      - rank-bm25
+      - sentence-transformers
+      - faiss-cpu
+

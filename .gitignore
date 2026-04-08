@@ -1,0 +1,40 @@
+## Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+## Notebooks
+.ipynb_checkpoints/
+
+## Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+## OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+## Secrets
+.env
+
+## Data (do not commit large/raw files)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+## App artifacts / logs
+*.log
+
