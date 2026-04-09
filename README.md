@@ -81,11 +81,9 @@ For Milestone 1, this project uses the `Video_Games` category from the Amazon Re
 Download the datasets into exiting data folders:
 
 ```bash
-curl -L "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/review_categories/Video_Games.jsonl?download=true" \
-  -o data/raw/Video_Games.jsonl
+curl -L "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/review_categories/Video_Games.jsonl?download=true" -o data/raw/Video_Games.jsonl
 
-curl -L "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Video_Games.jsonl?download=true" \
-  -o data/raw/meta_Video_Games.jsonl
+curl -L "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Video_Games.jsonl?download=true" -o data/raw/meta_Video_Games.jsonl
 ```
 
 
