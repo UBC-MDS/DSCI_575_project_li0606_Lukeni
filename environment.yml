@@ -1,18 +1,22 @@
 name: dsci575-ml
 channels:
+  - pytorch
   - conda-forge
 dependencies:
-  - python=3.12
-  - pip
+  - python=3.11
+  - numpy<2
   - pandas
-  - numpy
   - pyarrow
   - scikit-learn
-  - jupyter
+  - jupyterlab
+  - notebook
   - ipykernel
   - streamlit
+  - pytorch=2.2.2
+  - faiss-cpu
+  - pip
   - pip:
-      - python-dotenv
+      - transformers==4.41.2
+      - sentence-transformers==3.0.1
       - rank-bm25
-      - sentence-transformers
-      - faiss-cpu
+      - python-dotenv
