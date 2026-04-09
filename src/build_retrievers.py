@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.utils import load_jsonl_gz, build_corpus, save_corpus
+from src.utils import load_jsonl, build_corpus, save_corpus
 from src.bm25 import BM25Retriever
 from src.semantic import SemanticRetriever
 
@@ -10,11 +10,11 @@ def main() -> None:
     processed_dir = Path("data/processed")
     processed_dir.mkdir(parents=True, exist_ok=True)
 
-    reviews_path = raw_dir / "Video_Games.jsonl.gz"
-    meta_path = raw_dir / "meta_Video_Games.jsonl.gz"
+    reviews_path = raw_dir / "Video_Games.jsonl"
+    meta_path = raw_dir / "meta_Video_Games.jsonl"
 
-    reviews_df = load_jsonl_gz(reviews_path)
-    meta_df = load_jsonl_gz(meta_path)
+    reviews_df = load_jsonl(reviews_path)
+    meta_df = load_jsonl(meta_path)
 
     corpus_df = build_corpus(reviews_df, meta_df)
     save_corpus(corpus_df, processed_dir / "video_games_corpus.parquet")
