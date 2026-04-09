@@ -16,14 +16,16 @@ from typing import Any
 import pandas as pd
 
 
-def load_jsonl_gz(path: str | Path, max_rows: int | None = None) -> pd.DataFrame:
+def load_jsonl(path: str | Path, max_rows: int | None = None) -> pd.DataFrame:
     """
-    Load a .jsonl.gz file into a pandas DataFrame.
+    Load a .jsonl or .jsonl.gz file into a pandas DataFrame.
     """
     path = Path(path)
     records = []
 
-    with gzip.open(path, "rt", encoding="utf-8") as f:
+    open_func = gzip.open if path.suffix == ".gz" else open
+
+    with open_func(path, "rt", encoding="utf-8") as f:
         for i, line in enumerate(f):
             if max_rows is not None and i >= max_rows:
                 break
@@ -36,9 +38,6 @@ def load_jsonl_gz(path: str | Path, max_rows: int | None = None) -> pd.DataFrame
 
 
 def _safe_text(value: Any) -> str:
-    """
-    Convert text, lists, or stringified lists into one plain string.
-    """
     if value is None or (isinstance(value, float) and pd.isna(value)):
         return ""
 
@@ -62,9 +61,6 @@ def _safe_text(value: Any) -> str:
 
 
 def clean_text(text: Any) -> str:
-    """
-    Light text cleaning for retrieval text.
-    """
     text = _safe_text(text)
     text = text.lower()
     text = re.sub(r"<[^>]+>", " ", text)
@@ -74,17 +70,11 @@ def clean_text(text: Any) -> str:
 
 
 def tokenize_for_bm25(text: Any) -> list[str]:
-    """
-    Basic BM25 tokenization.
-    """
     cleaned = clean_text(text)
     return cleaned.split() if cleaned else []
 
 
 def pick_join_key(reviews_df: pd.DataFrame, meta_df: pd.DataFrame) -> str:
-    """
-    Pick the shared key for merging review and metadata.
-    """
     for key in ["parent_asin", "asin"]:
         if key in reviews_df.columns and key in meta_df.columns:
             return key
@@ -92,9 +82,6 @@ def pick_join_key(reviews_df: pd.DataFrame, meta_df: pd.DataFrame) -> str:
 
 
 def build_retrieval_text(row: pd.Series) -> str:
-    """
-    Create one retrieval text field using review + metadata.
-    """
     parts = [
         row.get("product_title", ""),
         row.get("categories", ""),
@@ -111,9 +98,6 @@ def build_corpus(
     meta_df: pd.DataFrame,
     min_review_chars: int = 20,
 ) -> pd.DataFrame:
-    """
-    Merge review data with metadata and create one row per review.
-    """
     join_key = pick_join_key(reviews_df, meta_df)
 
     reviews = reviews_df.copy()
@@ -168,9 +152,6 @@ def build_corpus(
 
 
 def save_corpus(df: pd.DataFrame, output_path: str | Path) -> None:
-    """
-    Save corpus as parquet if possible, otherwise csv.
-    """
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
