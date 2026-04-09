@@ -1,4 +1,4 @@
-name: dsci575-m1
+name: dsci575-ml
 channels:
   - conda-forge
 dependencies:
