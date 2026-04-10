@@ -8,13 +8,13 @@ def main() -> None:
     load_dotenv()
 
     st.set_page_config(page_title="DSCI 575 Retrieval Demo", layout="wide")
-    st.title("Retrieval Demo (Milestone 1)")
+    st.title("Retrieval Demo")
 
     mode = st.radio("Search mode", ["BM25", "Semantic", "Hybrid (optional)"], horizontal=True)
     query = st.text_input("Query", placeholder="e.g., wireless bluetooth headphones")
 
     st.caption(
-        "This is a scaffold app. In Milestone 1 you will connect it to BM25/FAISS indices built in `src/`."
+        "Connect this app to BM25/FAISS indices built in `src/` when ready."
     )
 
     if st.button("Search", type="primary", disabled=not query.strip()):

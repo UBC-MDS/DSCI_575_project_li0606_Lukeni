@@ -24,13 +24,14 @@ RED := \033[0;31m
 CYAN := \033[0;36m
 RESET := \033[0m
 
-.PHONY: help install dev clean check-env raw
+.PHONY: help install dev clean check-env raw eval
 
 help:
 	@echo -e "$(YELLOW)DSCI 575 ML — project tasks$(RESET)"
 	@echo "========================================================"
 	@echo -e "  $(GREEN)make install$(RESET)  : Create/update Conda env from environment.yml"
 	@echo -e "  $(GREEN)make raw$(RESET)      : Download Video_Games review + meta JSONL into data/raw/"
+	@echo -e "  $(GREEN)make eval$(RESET)     : BM25 vs semantic comparison from ground_truth.csv → qualitative_eval_runs.csv"
 	@echo -e "  $(GREEN)make dev$(RESET)      : Run Streamlit app (local dev server)"
 	@echo -e "  $(GREEN)make clean$(RESET)    : Remove __pycache__ and *.pyc"
 	@echo "========================================================"
@@ -69,3 +70,8 @@ raw:
 	@echo -e "$(GREEN)Saved:$(RESET)"
 	@echo "  $(RAW_DIR)/Video_Games.jsonl"
 	@echo "  $(RAW_DIR)/meta_Video_Games.jsonl"
+
+# --- Qualitative eval (requires sample FAISS + metadata under data/processed/) ---
+eval: check-env
+	@echo -e "$(GREEN)Running qualitative retrieval comparison...$(RESET)"
+	@PYTHONPATH=. $(PYTHON) -m src.run_qualitative_eval

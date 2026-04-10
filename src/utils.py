@@ -1,9 +1,4 @@
-"""
-Utility functions for building the retrieval corpus (Milestone 1).
-
-This file is intentionally a scaffold in the repository initialization step.
-You will implement corpus construction and tokenization utilities here.
-"""
+"""Utility functions for building the retrieval corpus and query helpers."""
 from __future__ import annotations
 
 import ast
@@ -172,3 +167,50 @@ def load_corpus(path: str | Path) -> pd.DataFrame:
     if path.suffix == ".parquet":
         return pd.read_parquet(path)
     return pd.read_csv(path)
+
+
+def load_ground_truth(path: str | Path) -> pd.DataFrame:
+    """
+    Load query set. Expected columns at minimum: query_id, query.
+    Optional: difficulty, relevant_doc_ids (pipe-separated doc_id values).
+    """
+    path = Path(path)
+    df = pd.read_csv(path)
+    required = {"query_id", "query"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"ground_truth CSV missing required columns: {sorted(missing)}")
+    return df
+
+
+def format_hit_line(
+    row: pd.Series,
+    title_col: str = "product_title",
+    text_col: str = "text",
+    rating_col: str = "rating",
+    max_title: int = 72,
+    max_text: int = 120,
+) -> str:
+    """One-line summary of a single retrieval hit for qualitative notes."""
+    title = str(row.get(title_col, "") or "")[:max_title]
+    text = str(row.get(text_col, "") or "").replace("\n", " ")[:max_text]
+    rating = row.get(rating_col, "")
+    return f"{title} | r={rating} | {text}"
+
+
+def format_topk_for_eval(
+    hits: pd.DataFrame,
+    k: int = 5,
+    title_col: str = "product_title",
+    text_col: str = "text",
+    score_col: str | None = None,
+) -> str:
+    """Compact multi-hit string for CSV / discussion tables (semicolon-separated rows)."""
+    lines = []
+    take = hits.head(k)
+    for _, row in take.iterrows():
+        part = format_hit_line(row, title_col=title_col, text_col=text_col)
+        if score_col and score_col in row.index:
+            part = f"{part} | score={row[score_col]:.4f}" if pd.notna(row[score_col]) else part
+        lines.append(part)
+    return " ;; ".join(lines)

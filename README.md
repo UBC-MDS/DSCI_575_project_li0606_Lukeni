@@ -1,6 +1,6 @@
-# DSCI 575 Project (Milestone 1)
+# DSCI 575 Project
 
-Information Retrieval with BM25 and Embeddings on the Amazon Reviews 2023 dataset.
+Information retrieval with BM25 and embeddings on the Amazon Reviews 2023 dataset.
 
 ## Badges
 
@@ -15,7 +15,7 @@ Information Retrieval with BM25 and Embeddings on the Amazon Reviews 2023 datase
 ├── README.md
 ├── requirements.txt         # Python dependencies
 ├── environment.yml          # Conda environment specification (optional)
-├── Makefile                 # shortcuts: install, raw, dev, clean (see `make help`)
+├── Makefile                 # shortcuts: install, raw, eval, dev, clean (see `make help`)
 ├── .env.example             # example environment variables (copy to .env)
 ├── .gitignore               # ignores secrets, raw data, and local artifacts
 ├── data/
@@ -25,14 +25,14 @@ Information Retrieval with BM25 and Embeddings on the Amazon Reviews 2023 datase
 │   └── milestone1_exploration.ipynb  # EDA + preprocessing notebook
 ├── src/
 │   ├── __init__.py          # marks `src` as a Python package
-│   ├── bm25.py              # BM25 retriever implementation (Milestone 1)
-│   ├── semantic.py          # embedding + vector search implementation (Milestone 1)
+│   ├── bm25.py              # BM25 retriever
+│   ├── semantic.py          # embedding + vector search
 │   ├── retrieval_metrics.py # optional: Precision@k / Recall@k / MRR, etc.
 │   └── utils.py             # corpus construction + tokenization utilities
 ├── results/
-│   └── milestone1_discussion.md  # qualitative evaluation notes for Milestone 1
+│   └── milestone1_discussion.md  # qualitative evaluation notes
 └── app/
-    └── app.py               # single app, updated each milestone
+    └── app.py               # Streamlit retrieval demo
 ```
 
 ## Setup
@@ -76,7 +76,7 @@ Notes:
 
 ## Download the raw dataset
 
-For Milestone 1, this project uses the **Video_Games** category from the [Amazon Reviews 2023](https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023) dataset on Hugging Face. Two files are required: review records and product metadata.
+This project uses the **Video_Games** category from the [Amazon Reviews 2023](https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023) dataset on Hugging Face. Two files are required: review records and product metadata.
 
 From the repository root, download both into `data/raw/`:
 
@@ -93,7 +93,18 @@ This fetches:
 
 Requires `curl` (available by default on macOS/Linux). The files are large; the command may take several minutes depending on your network.
 
-## Running the app (Milestone 1)
+## Qualitative evaluation
+
+After building the **sample** semantic artifacts in `data/processed/` (`faiss_sample.index`, `semantic_sample_metadata.pkl` — e.g. from `notebooks/milestone1_exploration.ipynb`), regenerate BM25 vs semantic comparison rows for all queries in `data/processed/ground_truth.csv`:
+
+```bash
+conda activate dsci575-ml
+make eval
+```
+
+This writes `data/processed/qualitative_eval_runs.csv`. Discussion notes belong in `results/milestone1_discussion.md`.
+
+## Running the app
 
 With conda env `dsci575-ml` activated:
 
@@ -113,6 +124,7 @@ streamlit run app/app.py
 make help      # list targets
 make install   # conda env update from environment.yml
 make raw       # download Video_Games JSONL files into data/raw/ (Hugging Face)
+make eval      # BM25 vs semantic comparison (ground_truth.csv → qualitative_eval_runs.csv)
 make dev       # local Streamlit dev server
 make clean     # remove __pycache__ / *.pyc
 ```
