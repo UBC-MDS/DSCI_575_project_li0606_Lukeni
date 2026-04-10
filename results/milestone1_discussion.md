@@ -3,9 +3,23 @@
 ## Evaluation setup
 
 - **Corpus scope:** BM25 and semantic search were run on the **same 1,000-document subset** as the saved sample FAISS index (`faiss_sample.index` + `semantic_sample_metadata.pkl` from the exploration notebook). BM25 is rebuilt on `semantic.corpus_df` so rankings are comparable.
-- **Query set:** `data/processed/ground_truth.csv` — **24 queries** with `difficulty` in {easy, medium, complex}. Column `relevant_doc_ids` is left empty for now (optional labels for quantitative metrics later).
+- **Query set:** `data/processed/ground_truth.csv` — **24 queries** with `difficulty` in {easy, medium, complex}. Column `relevant_doc_ids` lists **one manually chosen** `doc_id` per query (intent-aligned with the 1k sample); you can add more IDs separated by `|` to tighten labels.
 - **Top-k:** Retrieval uses **top 10** hits per method; summaries in `qualitative_eval_runs.csv` show **top 5** titles/snippets per query.
-- **Regenerate results:** From the repository root, with conda env `dsci575-ml` active: `make eval` (requires the sample semantic artifacts under `data/processed/`).
+- **Regenerate qualitative runs:** `make eval` (requires sample semantic artifacts under `data/processed/`).
+- **Quantitative metrics:** `make metrics` writes `retrieval_metrics_summary.csv` and `retrieval_metrics_per_query.csv` using binary relevance from `relevant_doc_ids`.
+
+## Quantitative metrics (labeled subset)
+
+Definitions: **P@k** = fraction of top-*k* slots that are relevant; **R@k** = fraction of labeled relevant docs found in top-*k* (here usually one doc, so R@k is 0 or 1 per query); **MRR** = mean reciprocal rank of the first relevant hit.
+
+On the **24 labeled queries** and the **aligned 1k** corpus (same setup as above), a recent run produced:
+
+| Method | P@5 | P@10 | R@5 | R@10 | MRR |
+|--------|-----|------|-----|------|-----|
+| BM25 | ~0.19 | ~0.10 | ~0.96 | ~0.96 | ~0.70 |
+| Semantic | ~0.08 | ~0.05 | ~0.38 | ~0.50 | ~0.30 |
+
+Exact numbers depend on embeddings and saved indices; re-run `make metrics` after changing labels or artifacts. These figures **complement** (not replace) qualitative judgment: labels are sparse and subjective.
 
 ## Summary table (high level)
 
@@ -62,12 +76,16 @@
 
 | File | Purpose |
 |------|---------|
-| `data/processed/ground_truth.csv` | Query IDs, text, difficulty; optional `relevant_doc_ids` for labeled evaluation |
-| `data/processed/qualitative_eval_runs.csv` | Automated BM25 vs semantic summaries and top-10 `doc_id` lists |
-| `src/run_qualitative_eval.py` | Regenerates `qualitative_eval_runs.csv` (invoked via `make eval`) |
-| `src/utils.py` | `load_ground_truth`, `format_topk_for_eval`, etc. |
+| `data/processed/ground_truth.csv` | Query IDs, text, difficulty, `relevant_doc_ids` for metrics |
+| `data/processed/qualitative_eval_runs.csv` | BM25 vs semantic summaries and top-10 `doc_id` lists |
+| `data/processed/retrieval_metrics_summary.csv` | Mean P@k, R@k, MRR per method (`make metrics`) |
+| `data/processed/retrieval_metrics_per_query.csv` | Per-query, per-method metrics |
+| `src/run_qualitative_eval.py` | Invoked by `make eval` |
+| `src/run_retrieval_metrics.py` | Invoked by `make metrics` |
+| `src/retrieval_metrics.py` | Metric definitions |
+| `src/utils.py` | `load_ground_truth`, `parse_relevant_doc_ids`, `format_topk_for_eval`, etc. |
 
 ## Limitations (labels and corpus)
 
-- **Labels:** `relevant_doc_ids` is empty; **Precision@k / Recall@k / MRR** need team agreement on **binary relevance** per query–doc pair or partial labels before automated metrics are meaningful.
-- **Corpus mismatch:** Full **50k** `video_games_corpus_sample` BM25 index in the notebook **does not** match the **1k** semantic index; this evaluation script **forces alignment** on the 1k subset. Full-corpus comparisons need **one shared index size** for both methods.
+- **Labels:** Each query uses **at least one** judged-relevant `doc_id`; metrics are only as good as those judgments. Add or edit `relevant_doc_ids` as the team refines ground truth.
+- **Corpus mismatch:** Full **50k** sample BM25 index in the notebook **does not** match the **1k** semantic index unless you rebuild; `make eval` / `make metrics` **align** on the 1k subset. Full-corpus comparisons need **one shared index size** for both methods.

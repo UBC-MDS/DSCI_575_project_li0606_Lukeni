@@ -183,6 +183,17 @@ def load_ground_truth(path: str | Path) -> pd.DataFrame:
     return df
 
 
+def parse_relevant_doc_ids(raw: Any) -> set[str]:
+    """Parse ground-truth cell into a set of doc_id strings; empty if missing."""
+    if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+        return set()
+    s = str(raw).strip()
+    if not s:
+        return set()
+    parts = re.split(r"[|,]", s)
+    return {p.strip() for p in parts if p.strip()}
+
+
 def format_hit_line(
     row: pd.Series,
     title_col: str = "product_title",

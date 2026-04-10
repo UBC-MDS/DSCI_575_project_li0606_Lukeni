@@ -15,7 +15,7 @@ Information retrieval with BM25 and embeddings on the Amazon Reviews 2023 datase
 ├── README.md
 ├── requirements.txt         # Python dependencies
 ├── environment.yml          # Conda environment specification (optional)
-├── Makefile                 # shortcuts: install, raw, eval, dev, clean (see `make help`)
+├── Makefile                 # shortcuts: install, raw, eval, metrics, dev, clean (see `make help`)
 ├── .env.example             # example environment variables (copy to .env)
 ├── .gitignore               # ignores secrets, raw data, and local artifacts
 ├── data/
@@ -27,7 +27,9 @@ Information retrieval with BM25 and embeddings on the Amazon Reviews 2023 datase
 │   ├── __init__.py          # marks `src` as a Python package
 │   ├── bm25.py              # BM25 retriever
 │   ├── semantic.py          # embedding + vector search
-│   ├── retrieval_metrics.py # optional: Precision@k / Recall@k / MRR, etc.
+│   ├── retrieval_metrics.py # Precision@k, Recall@k, MRR
+│   ├── run_qualitative_eval.py
+│   ├── run_retrieval_metrics.py
 │   └── utils.py             # corpus construction + tokenization utilities
 ├── results/
 │   └── milestone1_discussion.md  # qualitative evaluation notes
@@ -104,6 +106,17 @@ make eval
 
 This writes `data/processed/qualitative_eval_runs.csv`. Discussion notes belong in `results/milestone1_discussion.md`.
 
+### Retrieval metrics
+
+With `relevant_doc_ids` filled in `data/processed/ground_truth.csv` and the same sample artifacts as above:
+
+```bash
+conda activate dsci575-ml
+make metrics
+```
+
+This writes `data/processed/retrieval_metrics_summary.csv` and `retrieval_metrics_per_query.csv`. See `results/milestone1_discussion.md` for interpretation.
+
 ## Running the app
 
 With conda env `dsci575-ml` activated:
@@ -125,6 +138,7 @@ make help      # list targets
 make install   # conda env update from environment.yml
 make raw       # download Video_Games JSONL files into data/raw/ (Hugging Face)
 make eval      # BM25 vs semantic comparison (ground_truth.csv → qualitative_eval_runs.csv)
+make metrics   # P@k, R@k, MRR from labeled ground_truth.csv
 make dev       # local Streamlit dev server
 make clean     # remove __pycache__ / *.pyc
 ```

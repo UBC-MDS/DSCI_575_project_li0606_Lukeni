@@ -1,25 +1,25 @@
 query_id,query,difficulty,relevant_doc_ids
-q01,ps5 wireless controller rechargeable,easy,
-q02,nintendo switch sports fitness game,easy,
-q03,racing game with fast cars and tracks,easy,
-q04,final fantasy vii remake playstation,easy,
-q05,xbox series x controller battery pack,easy,
-q06,minecraft creative mode building kids,easy,
-q07,call of duty multiplayer fps shooter,easy,
-q08,steam deck case accessories screen protector,easy,
-q09,relaxing cozy game calm story after work,medium,
-q10,horror game scary atmosphere dark survival,medium,
-q11,couch co-op party game family friendly multiplayer,medium,
-q12,open world crafting exploration survival,medium,
-q13,soulslike difficult boss challenging combat,medium,
-q14,realistic sports simulation football or soccer,medium,
-q15,retro nostalgic 90s arcade style platformer,medium,
-q16,puzzle adventure relaxing soundtrack,medium,
-q17,best competitive fps headset footsteps positional audio under 100 dollars,complex,
-q18,game like zelda for someone new to video games,complex,
-q19,educational history strategy game for high school student,complex,
-q20,co-op narrative story game partner prefers story over combat,complex,
-q21,gift for dad who likes flight simulators and slow paced simulation,complex,
-q22,handheld for indie games and emulation portable pc,complex,
-q23,lego star wars complete saga family co-op,complex,
-q24,rhythm music game guitar or drums practice,medium,
+q01,ps5 wireless controller rechargeable,easy,doc_604
+q02,nintendo switch sports fitness game,easy,doc_931
+q03,racing game with fast cars and tracks,easy,doc_373
+q04,final fantasy vii remake playstation,easy,doc_1
+q05,xbox series x controller battery pack,easy,doc_819
+q06,minecraft creative mode building kids,easy,doc_740
+q07,call of duty multiplayer fps shooter,easy,doc_732
+q08,steam deck case accessories screen protector,easy,doc_669
+q09,relaxing cozy game calm story after work,medium,doc_494
+q10,horror game scary atmosphere dark survival,medium,doc_992
+q11,couch co-op party game family friendly multiplayer,medium,doc_170
+q12,open world crafting exploration survival,medium,doc_791
+q13,soulslike difficult boss challenging combat,medium,doc_361
+q14,realistic sports simulation football or soccer,medium,doc_714
+q15,retro nostalgic 90s arcade style platformer,medium,doc_831
+q16,puzzle adventure relaxing soundtrack,medium,doc_443
+q17,best competitive fps headset footsteps positional audio under 100 dollars,complex,doc_988
+q18,game like zelda for someone new to video games,complex,doc_897
+q19,educational history strategy game for high school student,complex,doc_879
+q20,co-op narrative story game partner prefers story over combat,complex,doc_883
+q21,gift for dad who likes flight simulators and slow paced simulation,complex,doc_217
+q22,handheld for indie games and emulation portable pc,complex,doc_727
+q23,lego star wars complete saga family co-op,complex,doc_658
+q24,rhythm music game guitar or drums practice,medium,doc_152
