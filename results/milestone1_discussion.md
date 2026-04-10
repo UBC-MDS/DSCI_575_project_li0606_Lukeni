@@ -5,7 +5,7 @@
 - **Corpus scope:** BM25 and semantic search were run on the **same 1,000-document subset** as the saved sample FAISS index (`faiss_sample.index` + `semantic_sample_metadata.pkl` from the exploration notebook). BM25 is rebuilt on `semantic.corpus_df` so rankings are comparable.
 - **Query set:** `data/processed/ground_truth.csv` — **24 queries** with `difficulty` in {easy, medium, complex}. Column `relevant_doc_ids` lists **one manually chosen** `doc_id` per query (intent-aligned with the 1k sample); you can add more IDs separated by `|` to tighten labels.
 - **Top-k:** Retrieval uses **top 10** hits per method; summaries in `qualitative_eval_runs.csv` show **top 5** titles/snippets per query.
-- **Regenerate qualitative runs:** `make eval` (requires sample semantic artifacts under `data/processed/`).
+- **Regenerate qualitative runs:** `make eval` (requires built indices under `data/processed/`; same bundle discovery as the app).
 - **Quantitative metrics:** `make metrics` writes `retrieval_metrics_summary.csv` and `retrieval_metrics_per_query.csv` using binary relevance from `relevant_doc_ids`.
 
 ## Quantitative metrics (labeled subset)
@@ -68,7 +68,7 @@ Exact numbers depend on embeddings and saved indices; re-run `make metrics` afte
 
 ## Where hybrid / reranking / RAG might help
 
-- **Hybrid:** Combine BM25 (precision on keywords) with semantic (recall on paraphrases), e.g., RRF or weighted fusion — matches a Streamlit app “Hybrid” mode if you add one later.
+- **Hybrid:** The Streamlit app exposes RRF fusion; other fusion weights or rerankers remain optional.
 - **Reranking:** Cross-encoder or LLM rerank on top-20 candidates could fix **accessory vs. game** confusion (e.g., controllers vs. headsets).
 - **RAG:** Useful when answers need **synthesis** beyond listing products; optional for retrieval-only comparisons.
 
@@ -80,8 +80,8 @@ Exact numbers depend on embeddings and saved indices; re-run `make metrics` afte
 | `data/processed/qualitative_eval_runs.csv` | BM25 vs semantic summaries and top-10 `doc_id` lists |
 | `data/processed/retrieval_metrics_summary.csv` | Mean P@k, R@k, MRR per method (`make metrics`) |
 | `data/processed/retrieval_metrics_per_query.csv` | Per-query, per-method metrics |
-| `src/run_qualitative_eval.py` | Invoked by `make eval` |
-| `src/run_retrieval_metrics.py` | Invoked by `make metrics` |
+| `src/evaluation.py` | `make eval` / `make metrics` (or `python -m src.evaluation all`) |
+| `src/retrieval.py` | Index bundle + hybrid RRF (shared with the Streamlit app) |
 | `src/retrieval_metrics.py` | Metric definitions |
 | `src/utils.py` | `load_ground_truth`, `parse_relevant_doc_ids`, `format_topk_for_eval`, etc. |
 

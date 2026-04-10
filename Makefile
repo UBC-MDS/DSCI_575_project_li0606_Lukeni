@@ -34,7 +34,7 @@ help:
 	@echo -e "  $(GREEN)make eval$(RESET)     : BM25 vs semantic comparison from ground_truth.csv → qualitative_eval_runs.csv"
 	@echo -e "  $(GREEN)make metrics$(RESET)  : Precision@k, Recall@k, MRR from labeled ground_truth.csv"
 	@echo -e "  $(GREEN)make dev$(RESET)      : Run Streamlit app (local dev server)"
-	@echo -e "  $(GREEN)make clean$(RESET)    : Remove __pycache__ and *.pyc"
+	@echo -e "  $(GREEN)make clean$(RESET)    : Remove __pycache__, *.pyc, data/raw downloads, data/processed/*"
 	@echo "========================================================"
 
 # --- Environment: sync from environment.yml ---
@@ -60,6 +60,9 @@ dev: check-env
 clean:
 	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@echo -e "$(YELLOW)Removing data/raw downloads and data/processed contents (except .gitkeep)...$(RESET)"
+	@[ -d "$(RAW_DIR)" ] && find "$(RAW_DIR)" -maxdepth 1 -type f ! -name '.gitkeep' -delete 2>/dev/null || true
+	@[ -d data/processed ] && find data/processed -mindepth 1 -maxdepth 1 ! -name '.gitkeep' -exec rm -rf {} + 2>/dev/null || true
 	@echo -e "$(GREEN)Clean complete$(RESET)"
 
 # --- Raw data: Amazon Reviews 2023 (Video_Games) from Hugging Face ---
@@ -75,9 +78,9 @@ raw:
 # --- Qualitative eval (requires sample FAISS + metadata under data/processed/) ---
 eval: check-env
 	@echo -e "$(GREEN)Running qualitative retrieval comparison...$(RESET)"
-	@PYTHONPATH=. $(PYTHON) -m src.run_qualitative_eval
+	@PYTHONPATH=. $(PYTHON) -m src.evaluation qualitative
 
 # --- Retrieval metrics (requires relevant_doc_ids in ground_truth.csv) ---
 metrics: check-env
 	@echo -e "$(GREEN)Computing retrieval metrics...$(RESET)"
-	@PYTHONPATH=. $(PYTHON) -m src.run_retrieval_metrics
+	@PYTHONPATH=. $(PYTHON) -m src.evaluation metrics
