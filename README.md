@@ -15,11 +15,11 @@ Information Retrieval with BM25 and Embeddings on the Amazon Reviews 2023 datase
 ├── README.md
 ├── requirements.txt         # Python dependencies
 ├── environment.yml          # Conda environment specification (optional)
-├── Makefile                 # shortcuts: install, dev, clean (see `make help`)
+├── Makefile                 # shortcuts: install, raw, dev, clean (see `make help`)
 ├── .env.example             # example environment variables (copy to .env)
 ├── .gitignore               # ignores secrets, raw data, and local artifacts
 ├── data/
-│   ├── raw/                 # downloaded *.jsonl.gz (NOT committed; folder kept via .gitkeep)
+│   ├── raw/                 # downloaded *.jsonl (NOT committed; folder kept via .gitkeep)
 │   └── processed/           # cleaned / chunked / indices (folder kept via .gitkeep)
 ├── notebooks/
 │   └── milestone1_exploration.ipynb  # EDA + preprocessing notebook
@@ -74,6 +74,25 @@ Notes:
 - Do **not** commit `.env`.
 - Large/raw dataset files should live in `data/raw/` and are ignored by git.
 
+## Download the raw dataset
+
+For Milestone 1, this project uses the **Video_Games** category from the [Amazon Reviews 2023](https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023) dataset on Hugging Face. Two files are required: review records and product metadata.
+
+From the repository root, download both into `data/raw/`:
+
+```bash
+make raw
+```
+
+This fetches:
+
+| File | Role |
+|------|------|
+| `data/raw/Video_Games.jsonl` | Reviews |
+| `data/raw/meta_Video_Games.jsonl` | Product metadata |
+
+Requires `curl` (available by default on macOS/Linux). The files are large; the command may take several minutes depending on your network.
+
 ## Running the app (Milestone 1)
 
 With conda env `dsci575-ml` activated:
@@ -93,6 +112,7 @@ streamlit run app/app.py
 ```bash
 make help      # list targets
 make install   # conda env update from environment.yml
+make raw       # download Video_Games JSONL files into data/raw/ (Hugging Face)
 make dev       # local Streamlit dev server
 make clean     # remove __pycache__ / *.pyc
 ```
@@ -100,4 +120,4 @@ make clean     # remove __pycache__ / *.pyc
 ## Reproducibility checklist
 
 - A TA should be able to clone the repo, create an environment, set `.env` values, and run the app.
-- Dataset files (Amazon Reviews 2023) must be downloaded separately and placed under `data/raw/`.
+- Run `make raw` once to pull Amazon Reviews 2023 (Video_Games) into `data/raw/` before notebooks or `src/build_retrievers.py`.
