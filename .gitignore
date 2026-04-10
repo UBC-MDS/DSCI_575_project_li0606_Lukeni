@@ -38,3 +38,5 @@ data/processed/*
 ## App artifacts / logs
 *.log
 
+tests/tmp_test_data/*
+
