@@ -2,6 +2,9 @@
 
 This project implements retrieval over the **Video Games** category of [Amazon Reviews 2023](https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023): **BM25** lexical search, **dense** retrieval (sentence embeddings + FAISS), and **hybrid** ranking via reciprocal rank fusion. A **Streamlit** application provides interactive search and optional relevance feedback; **offline evaluation** scripts output qualitative comparisons and precision/recall/MRR-style metrics against labeled queries.
 
+Data processing:
+We use the Amazon Reviews 2023 Video_Games category. Each retrieval document is built at the review level and enriched with product metadata. The final retrieval text combines product title, categories, features, description, review title, and review text. Preprocessing includes lowercasing, removing most punctuation, normalizing whitespace, and using whitespace tokenization for BM25. For efficiency, this project uses a representative sample rather than the full category.
+
 ## Badges
 
 ![Python](https://img.shields.io/badge/python-3.x-informational)
