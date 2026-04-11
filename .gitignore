@@ -34,7 +34,13 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+!data/processed/ground_truth.csv
+!data/processed/qualitative_eval_runs.csv
+!data/processed/retrieval_metrics_summary.csv
+!data/processed/retrieval_metrics_per_query.csv
 
 ## App artifacts / logs
 *.log
+
+tests/tmp_test_data/*
 
