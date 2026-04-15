@@ -165,3 +165,11 @@ make clean     # remove __pycache__, *.pyc, data/raw downloads, and data/process
 - Create the environment from `environment.yml` or `requirements.txt`.
 - Run `make raw`, then execute the sample corpus, BM25, and semantic sections of `notebooks/milestone1_exploration.ipynb` so `data/processed/` contains the app bundle.
 - Run `make dev` to launch the Streamlit app locally.
+
+## Milestone 2 LLM setup
+
+This milestone uses a hosted LLM API instead of local model inference.
+
+1. Copy `.env.example` to `.env`
+2. Add your `GROQ_API_KEY`
+3. Recreate the environment from `environment.yml`
