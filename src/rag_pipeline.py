@@ -45,7 +45,7 @@ class SemanticRAGPipeline:
     ) -> None:
         self.top_k = top_k
         self.system_prompt = system_prompt
-        self.model_name = model_name or os.getenv("LLM_MODEL", "llama3-8b-8192")
+        self.model_name = model_name or os.getenv("LLM_MODEL", "llama-3.1-8b-instant")
 
         self.retriever = SemanticRetriever.load_saved(
             index_path=faiss_index_path,
@@ -122,7 +122,7 @@ class HybridRAGPipeline(SemanticRAGPipeline):
     ) -> None:
         self.top_k = top_k
         self.system_prompt = system_prompt
-        self.model_name = model_name or os.getenv("LLM_MODEL", "llama3-8b-8192")
+        self.model_name = model_name or os.getenv("LLM_MODEL", "llama-3.1-8b-instant")
 
         bm25 = BM25Retriever.load_saved(
             corpus_path=corpus_path,
