@@ -102,3 +102,45 @@ Answer using only the context above:
             "context": context,
             "prompt": prompt,
         }
+    
+
+
+from src.bm25 import BM25Retriever
+from src.hybrid import HybridRetriever
+
+class HybridRAGPipeline(SemanticRAGPipeline):
+    def __init__(
+        self,
+        corpus_path: str,
+        bm25_index_path: str,
+        bm25_tokens_path: str,
+        faiss_index_path: str,
+        metadata_path: str,
+        model_name: str = None,
+        top_k: int = 5,
+        system_prompt: str = SYSTEM_PROMPT_V1,
+    ) -> None:
+        self.top_k = top_k
+        self.system_prompt = system_prompt
+        self.model_name = model_name or os.getenv("LLM_MODEL", "llama3-8b-8192")
+
+        bm25 = BM25Retriever.load_saved(
+            corpus_path=corpus_path,
+            index_path=bm25_index_path,
+            tokens_path=bm25_tokens_path,
+        )
+        semantic = SemanticRetriever.load_saved(
+            index_path=faiss_index_path,
+            metadata_path=metadata_path,
+        )
+
+        self.retriever = HybridRetriever(
+            bm25_retriever=bm25,
+            semantic_retriever=semantic,
+            top_k=top_k,
+        )
+
+        self.llm = ChatGroq(
+            model=self.model_name,
+            api_key=os.getenv("GROQ_API_KEY"),
+        )
