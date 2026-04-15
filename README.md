@@ -168,8 +168,36 @@ make clean     # remove __pycache__, *.pyc, data/raw downloads, and data/process
 
 ## Milestone 2 LLM setup
 
-This milestone uses a hosted LLM API instead of local model inference.
 
-1. Copy `.env.example` to `.env`
-2. Add your `GROQ_API_KEY`
-3. Recreate the environment from `environment.yml`
+
+## Workflow diagram
+
+```mermaid
+flowchart TD
+    A[User Query] --> B[Retriever]
+    B --> C[Top-k Documents]
+    C --> D[Context Builder]
+    D --> E[Prompt Template]
+    E --> F[Hosted LLM API]
+    F --> G[Generated Answer]
+
+    subgraph Semantic RAG
+        B1[Semantic Retriever / FAISS]
+    end
+
+    subgraph Hybrid RAG
+        B2[BM25 Retriever]
+        B3[Semantic Retriever]
+        B4[Hybrid Merger / RRF]
+    end
+
+    A --> B1
+    B1 --> C
+
+    A --> B2
+    A --> B3
+    B2 --> B4
+    B3 --> B4
+    B4 --> C
+```
+
