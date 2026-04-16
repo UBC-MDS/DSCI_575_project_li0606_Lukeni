@@ -16,8 +16,8 @@ We use the Amazon Reviews 2023 Video_Games category. Each retrieval document is 
 ```
 .
 ├── README.md
-├── requirements.txt         # Python dependencies
-├── environment.yml          # Conda environment specification (optional)
+├── requirements.txt         # Python dependencies (single source of truth for pip)
+├── environment.yml          # Conda: Python + PyTorch base, then `pip install -r requirements.txt`
 ├── Makefile                 # shortcuts: install, raw, eval, metrics, dev, clean (see `make help`)
 ├── .env.example             # example environment variables (optional; copy to .env)
 ├── .gitignore               # ignores secrets, raw data, and local processed artifacts (small eval CSVs may be tracked)
@@ -32,10 +32,13 @@ We use the Amazon Reviews 2023 Video_Games category. Each retrieval document is 
 │   ├── semantic.py          # embedding + vector search
 │   ├── retrieval_metrics.py # Precision@k, Recall@k, MRR
 │   ├── retrieval.py         # index bundle discovery, load, RRF hybrid
+│   ├── rag_pipeline.py      # Milestone 2: semantic + hybrid RAG (Groq LLM)
+│   ├── hybrid.py            # BM25 + dense hybrid retriever (RRF) for RAG
 │   ├── evaluation.py        # offline eval: ``python -m src.evaluation {qualitative|metrics|all}``
 │   └── utils.py             # corpus construction + tokenization utilities
 ├── results/
-│   └── milestone1_discussion.md  # qualitative evaluation notes
+│   ├── milestone1_discussion.md   # Milestone 1 qualitative evaluation notes
+│   └── milestone2_discussion.md   # Milestone 2 RAG discussion / evaluation (as required)
 └── app/
     └── app.py               # Streamlit app (local)
 ```
@@ -43,6 +46,8 @@ We use the Amazon Reviews 2023 Video_Games category. Each retrieval document is 
 ## Setup
 
 ### 1) Create and activate a Python environment
+
+The **conda** environment name is **`dsci575-ml`** (hyphen between `575` and `ml`, not an underscore).
 
 Using `venv`:
 
@@ -60,8 +65,7 @@ conda activate dsci575-ml
 
 ### 2) Install dependencies
 
-If you used `conda`, dependencies are installed as part of the environment creation step above.
-If you used `venv`, install with pip:
+`requirements.txt` is the canonical list of pip packages (used for `venv`, CI, Streamlit Cloud, and as the `-r` file for conda). If you used `conda`, `environment.yml` installs a small conda base (Python 3.11, NumPy, PyTorch) and then runs `pip install -r requirements.txt`. If you used `venv`, install with:
 
 ```bash
 pip install -r requirements.txt
@@ -69,7 +73,20 @@ pip install -r requirements.txt
 
 ### 3) Environment variables (optional)
 
-Copy `.env.example` to `.env` only if you need non-default paths. The app uses **`PROCESSED_DATA_DIR`** (default `data/processed/`) and **`FEEDBACK_LOG_PATH`** (default `data/processed/app_feedback.csv`). Do not commit `.env`.
+Copy `.env.example` to `.env` when you need overrides. Do not commit `.env`.
+
+**Paths (retrieval app):** **`PROCESSED_DATA_DIR`** (default `data/processed/`) and **`FEEDBACK_LOG_PATH`** (default `data/processed/app_feedback.csv`).
+
+**Groq API (Milestone 2 RAG):** `src/rag_pipeline.py` reads **`GROQ_API_KEY`** and optional **`LLM_MODEL`** (see `.env.example`).
+
+**Shared key in `.env.example`:** For this student project, `.env.example` commits a **Groq free-tier API key** so the team and graders can run RAG without each registering a key. Treat that value as **public** (anyone with the repo can use or exhaust quota). For private forks, production, or sensitive data, create your own key at [Groq Console](https://console.groq.com/keys) and put it in `.env` only.
+
+## Milestone 2 LLM setup
+
+RAG uses **Groq** via `langchain-groq` (`ChatGroq`). After installing dependencies, copy `.env.example` to `.env` if you need overrides; the committed example already includes a shared key (see disclosure above).
+
+- **`LLM_MODEL`:** defaults to `llama-3.1-8b-instant` if unset.
+- **Implementation:** `SemanticRAGPipeline` and `HybridRAGPipeline` live in `src/rag_pipeline.py`; hybrid retrieval merges BM25 and dense results in `src/hybrid.py`.
 
 ## Download the raw dataset
 
@@ -116,7 +133,7 @@ streamlit run app/app.py
 
 5. Open the URL shown in the terminal (default `http://127.0.0.1:8501`). If indices are missing, the app will error until step 3 completes successfully.
 
-Optional: `make install` updates the conda env from `environment.yml` after dependency changes.
+Optional: `make install` updates the conda environment **`dsci575-ml`** from `environment.yml` after dependency changes.
 
 ## Qualitative evaluation
 
@@ -150,7 +167,7 @@ PYTHONPATH=. python -m src.evaluation all
 
 ```bash
 make help      # list targets
-make install   # conda env update from environment.yml
+make install   # update conda env dsci575-ml from environment.yml
 make raw       # download Video_Games JSONL files into data/raw/ (Hugging Face)
 make eval      # BM25 vs semantic comparison (ground_truth.csv → qualitative_eval_runs.csv)
 make metrics   # P@k, R@k, MRR from labeled ground_truth.csv
@@ -162,6 +179,38 @@ make clean     # remove __pycache__, *.pyc, data/raw downloads, and data/process
 
 ## Reproducibility checklist
 
-- Create the environment from `environment.yml` or `requirements.txt`.
+- Create the environment from `environment.yml` (conda env **`dsci575-ml`**) or from `requirements.txt` in a `venv`.
 - Run `make raw`, then execute the sample corpus, BM25, and semantic sections of `notebooks/milestone1_exploration.ipynb` so `data/processed/` contains the app bundle.
-- Run `make dev` to launch the Streamlit app locally.
+- Activate **`dsci575-ml`** if using conda, then run `make dev` to launch the Streamlit app locally.
+
+## Workflow diagram
+
+```mermaid
+flowchart TD
+    A[User Query] --> B[Retriever]
+    B --> C[Top-k Documents]
+    C --> D[Context Builder]
+    D --> E[Prompt Template]
+    E --> F[Hosted LLM API]
+    F --> G[Generated Answer]
+
+    subgraph Semantic RAG
+        B1[Semantic Retriever / FAISS]
+    end
+
+    subgraph Hybrid RAG
+        B2[BM25 Retriever]
+        B3[Semantic Retriever]
+        B4[Hybrid Merger / RRF]
+    end
+
+    A --> B1
+    B1 --> C
+
+    A --> B2
+    A --> B3
+    B2 --> B4
+    B3 --> B4
+    B4 --> C
+```
+
