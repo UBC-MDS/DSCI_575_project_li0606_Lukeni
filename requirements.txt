@@ -1,7 +1,9 @@
+# Single source of truth for pip installs (venv, CI, Streamlit Cloud, and conda via environment.yml).
 python-dotenv
 streamlit
 pandas
-numpy
+numpy<2
+pyarrow
 scikit-learn
 rank-bm25
 sentence-transformers
@@ -9,4 +11,6 @@ faiss-cpu
 langchain
 langchain-core
 langchain-groq
-
+jupyterlab
+notebook
+ipykernel
