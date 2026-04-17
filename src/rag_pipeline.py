@@ -23,6 +23,12 @@ If the context is insufficient, say so clearly.
 Keep the answer concise, helpful, and grounded in the retrieved evidence.
 """
 
+SYSTEM_PROMPT_V3 = """
+You are an Amazon reviews analyst.
+Answer the user only from the retrieved reviews and product metadata.
+Prefer direct evidence from the retrieved context, and avoid unsupported claims.
+"""
+
 @dataclass
 class RetrievedDoc:
     product_title: str
@@ -73,8 +79,9 @@ class SemanticRAGPipeline:
             blocks.append(block)
         return "\n\n".join(blocks)
 
-    def build_prompt(self, query: str, context: str) -> str:
-        return f"""{self.system_prompt}
+    def build_prompt(self, query: str, context: str, system_prompt: str | None = None) -> str:
+        sp = system_prompt if system_prompt is not None else self.system_prompt
+        return f"""{sp}
 
 Context:
 {context}
@@ -89,10 +96,15 @@ Answer using only the context above:
         response = self.llm.invoke(prompt)
         return response.content
 
-    def answer(self, query: str):
+    def answer(self, query: str, system_prompt: str | None = None):
+        """
+        If ``system_prompt`` is None, uses ``self.system_prompt`` (default ``SYSTEM_PROMPT_V1``
+        unless the pipeline was constructed with another default).
+        Pass ``SYSTEM_PROMPT_V1/V2/V3`` to switch behavior without rebuilding the pipeline.
+        """
         docs = self.retrieve(query)
         context = self.build_context(docs)
-        prompt = self.build_prompt(query, context)
+        prompt = self.build_prompt(query, context, system_prompt=system_prompt)
         answer = self.generate(prompt)
 
         return {

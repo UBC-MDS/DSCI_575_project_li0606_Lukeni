@@ -32,7 +32,7 @@ help:
 	@echo "========================================================"
 	@echo -e "  $(GREEN)make install$(RESET)  : Create/update Conda env $(ENV_NAME) from environment.yml"
 	@echo -e "  $(GREEN)make raw$(RESET)      : Download Video_Games review + meta JSONL into data/raw/"
-	@echo -e "  $(GREEN)make eval$(RESET)     : BM25 vs semantic comparison from ground_truth.csv → qualitative_eval_runs.csv"
+	@echo -e "  $(GREEN)make eval$(RESET)     : Milestone 1 qualitative CSV + Milestone 2 hybrid RAG JSON (needs GROQ_API_KEY)"
 	@echo -e "  $(GREEN)make metrics$(RESET)  : Precision@k, Recall@k, MRR from labeled ground_truth.csv"
 	@echo -e "  $(GREEN)make dev$(RESET)      : Run Streamlit app (local dev server)"
 	@echo -e "  $(GREEN)make clean$(RESET)    : Remove __pycache__, *.pyc, data/raw downloads, data/processed/*"
@@ -76,10 +76,10 @@ raw:
 	@echo "  $(RAW_DIR)/Video_Games.jsonl"
 	@echo "  $(RAW_DIR)/meta_Video_Games.jsonl"
 
-# --- Qualitative eval (requires sample FAISS + metadata under data/processed/) ---
+# --- Qualitative + Milestone 2 RAG eval (sample bundle under data/processed/; RAG needs GROQ_API_KEY) ---
 eval: check-env
-	@echo -e "$(GREEN)Running qualitative retrieval comparison...$(RESET)"
-	@PYTHONPATH=. $(PYTHON) -m src.evaluation qualitative
+	@echo -e "$(GREEN)Running eval: qualitative (M1) + hybrid RAG JSON (M2)...$(RESET)"
+	@PYTHONPATH=. $(PYTHON) -m src.evaluation eval
 
 # --- Retrieval metrics (requires relevant_doc_ids in ground_truth.csv) ---
 metrics: check-env
