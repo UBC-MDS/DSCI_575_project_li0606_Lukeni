@@ -5,9 +5,10 @@ Uses the same **notebook sample** bundle as the Streamlit app (``src.retrieval.d
 
 Examples::
 
-    make eval      # qualitative only
+    make eval      # Milestone 1 qualitative CSV + Milestone 2 RAG JSON
     make metrics   # metrics only
     PYTHONPATH=. python -m src.evaluation all
+    PYTHONPATH=. python -m src.evaluation milestone2_rag   # RAG JSON only
 """
 
 from __future__ import annotations
@@ -74,6 +75,15 @@ def run_qualitative(processed: Path | None = None, top_k: int = 10) -> Path:
     out_df.to_csv(out_path, index=False)
     print(f"Wrote {out_path} ({len(out_df)} queries, top_k={top_k}, bundle={bundle.label}).")
     return out_path
+
+
+def run_eval_bundle(processed: Path | None = None, top_k: int = 10) -> tuple[Path, Path]:
+    """Milestone 1 qualitative CSV + Milestone 2 hybrid RAG JSON (requires ``GROQ_API_KEY``)."""
+    from src.milestone2_rag_eval import run_milestone2_rag_eval
+
+    qpath = run_qualitative(processed, top_k=top_k)
+    rag_path = run_milestone2_rag_eval()
+    return qpath, rag_path
 
 
 def run_metrics(processed: Path | None = None, top_k: int = 10) -> tuple[Path, Path]:
@@ -174,11 +184,15 @@ def run_metrics(processed: Path | None = None, top_k: int = 10) -> tuple[Path, P
 
 def main() -> None:
     _ensure_project_path()
-    p = argparse.ArgumentParser(description="Retrieval evaluation (qualitative + metrics).")
+    p = argparse.ArgumentParser(description="Retrieval evaluation (qualitative + metrics + optional RAG).")
     p.add_argument(
         "command",
-        choices=("qualitative", "metrics", "all"),
-        help="qualitative: CSV of BM25 vs semantic runs; metrics: P@k/R@k/MRR; all: both",
+        choices=("qualitative", "metrics", "milestone2_rag", "eval", "all"),
+        help=(
+            "qualitative: BM25 vs semantic CSV; metrics: P@k/R@k/MRR; "
+            "milestone2_rag: hybrid RAG JSON only; "
+            "eval: qualitative + milestone2_rag (same as make eval); all: qualitative + metrics"
+        ),
     )
     p.add_argument(
         "--processed",
@@ -189,9 +203,18 @@ def main() -> None:
     args = p.parse_args()
     processed = args.processed
 
-    if args.command in ("qualitative", "all"):
+    if args.command == "qualitative":
         run_qualitative(processed)
-    if args.command in ("metrics", "all"):
+    elif args.command == "milestone2_rag":
+        from src.milestone2_rag_eval import run_milestone2_rag_eval
+
+        run_milestone2_rag_eval()
+    elif args.command == "eval":
+        run_eval_bundle(processed)
+    elif args.command == "all":
+        run_qualitative(processed)
+        run_metrics(processed)
+    elif args.command == "metrics":
         run_metrics(processed)
 
 
