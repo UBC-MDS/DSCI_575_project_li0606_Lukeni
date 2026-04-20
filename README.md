@@ -183,7 +183,7 @@ There are two reproducible ways to build the retrieval artifacts needed by the a
 
 ### Option A: Run the Python build script
 
-This is the cleaner but slower reproducibility path if it runs well on your machine.
+This is the cleaner but slower reproducibility path.
 
 ```bash
 python -m src.build_retrievers
