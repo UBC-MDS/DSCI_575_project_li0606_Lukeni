@@ -103,9 +103,7 @@ Copy `.env.example` to `.env` when you need overrides. Do not commit `.env`.
 
 **Paths (retrieval app):** **`PROCESSED_DATA_DIR`** (default `data/processed/`) and **`FEEDBACK_LOG_PATH`** (default `data/processed/app_feedback.csv`).
 
-**Groq API (RAG):** `src/rag_pipeline.py` reads **`GROQ_API_KEY`** and optional **`LLM_MODEL`** (see `.env.example`). Without `GROQ_API_KEY`, the **Search** tab still works; the **RAG** tab shows an error until the key is set.
-
-**Shared key in `.env.example`:** For this student project, `.env.example` may include a **Groq free-tier API key** so the team and graders can run RAG without each registering a key. Treat that value as **public** (anyone with the repo can use or exhaust quota). For private forks, production, or sensitive data, create your own key at [Groq Console](https://console.groq.com/keys) and put it in `.env` only.
+**Groq API (RAG):** `src/rag_pipeline.py` reads **`GROQ_API_KEY`** and optional **`LLM_MODEL`** (see `.env.example`). Without `GROQ_API_KEY`, the **Search** tab still works; the **RAG** tab shows an error until the key is set. Create your own key at [Groq Console](https://console.groq.com/keys) and put it in `.env` only.
 
 ### 4) Dependency changes after `git pull`
 
