@@ -64,6 +64,11 @@ We decided to keep `llama-3.1-8b-instant` as the default model in the pipeline. 
   
 ## Step 3: Improve Documentation and Code Quality
 
+- created src/config.py and updated build_retriver.py to remove hardcoded path
+- remove api key from .env.example
+- ensure all functions have docstring
+
+
 ### Documentation Update
 - Summary of `README` improvements
 
