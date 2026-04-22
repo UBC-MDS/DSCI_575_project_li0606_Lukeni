@@ -1,0 +1,4 @@
+# Notebooks and local dev only. Not required for the Streamlit app.
+jupyterlab
+notebook
+ipykernel
