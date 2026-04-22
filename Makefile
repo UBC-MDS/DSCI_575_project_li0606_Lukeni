@@ -76,7 +76,7 @@ raw:
 	@echo "  $(RAW_DIR)/Video_Games.jsonl"
 	@echo "  $(RAW_DIR)/meta_Video_Games.jsonl"
 
-# --- Qualitative + Milestone 2 RAG eval (sample bundle under data/processed/; RAG needs GROQ_API_KEY) ---
+# --- Qualitative + Milestone 2 RAG eval (final scaled bundle under data/processed/; RAG needs GROQ_API_KEY) ---
 eval: check-env
 	@echo -e "$(GREEN)Running eval: qualitative (M1) + hybrid RAG JSON (M2)...$(RESET)"
 	@PYTHONPATH=. $(PYTHON) -m src.evaluation eval
