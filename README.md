@@ -4,7 +4,22 @@ This project implements retrieval over the **Video Games** category of [Amazon R
 
 **Release:** [v0.2.0](https://github.com/UBC-MDS/DSCI_575_project_li0606_Lukeni/releases/tag/v0.2.0)
 
-**Corpus scope:** The deployed pipeline and evaluation tools use a **review-level** corpus derived from the Amazon Reviews 2023 **Video_Games** category: **10,000 unique products**, with at most **three reviews per product** retained during construction (typically **~29k–30k** review rows; the exact count is the number of lines in `video_games_corpus_final.parquet` or `.csv` under `data/processed/`). Each document concatenates product title, categories, features, description, review title, and review text. Preprocessing includes lowercasing, removal of most punctuation, whitespace normalization, and whitespace tokenization for BM25. The public category JSONL files are full-category dumps; BM25 and FAISS indices in this repository are built only from the filtered 10k-product subset, not from the entire Amazon Video_Games catalog.
+**Corpus scope:** The pipeline uses a **review-level** corpus from the Amazon Reviews 2023 **Video_Games** category: **10,000 unique products** and at most **three reviews per product** in the build (typically **~29k–30k** review rows; the exact row count is in `data/processed/video_games_corpus_final.*`). Each document combines product title, categories, features, description, review title, and review text, with the preprocessing described in the scaling notebook. Only this filtered subset is indexed (not the full category JSONL).
+
+## Outcomes
+
+- **Public Streamlit app:** [Link](https://dsci575li0606lukeni.streamlit.app/) — search (BM25 / dense / hybrid) and RAG over the scaled index.
+- **Report:** [`results/final_discussion.md`](results/final_discussion.md) — dataset scaling, LLM comparison, offline evaluation, deployment plan, and code-quality notes.
+- **Large `*_final` files** (not stored in this repo): [release `0.0.1` — *data_model_storage*](https://github.com/JayLBean/data_model_storage/releases/tag/0.0.1) (the hosted app can pull from this URL via `app` settings; not required to reproduce locally if you build indices yourself).
+
+## Reproducibility (local)
+
+1. **Environment:** `make install` → `conda activate dsci575-ml` (or `python -m venv .venv` + `pip install -r requirements.txt`; see *Setup* below).
+2. **Raw inputs:** `make raw` → `data/raw/Video_Games.jsonl` and `meta_Video_Games.jsonl`.
+3. **Build indices and corpus:** run `notebooks/milestone3_scaling.ipynb` to completion, **or** `python -m src.build_retrievers` — both produce the `*_final` files under `data/processed/`.
+4. **Environment variables:** copy `.env.example` to `.env` and set at least **`GROQ_API_KEY`** for the RAG tab.
+5. **Run the app:** from the repo root, `make dev` or `streamlit run app/app.py` and open the local URL (default `http://127.0.0.1:8501`).
+6. **Optional — notebooks / Make:** `notebooks/milestone2_rag.ipynb` for additional RAG experiments; `make eval` and `make metrics` for the offline tables (see *Qualitative evaluation*). Earlier milestone write-ups: `results/milestone1_discussion.md`, `results/milestone2_discussion.md`.
 
 ## Badges
 
@@ -41,6 +56,7 @@ This project implements retrieval over the **Video Games** category of [Amazon R
 │   ├── hybrid.py            # BM25 + dense hybrid retriever (RRF) for RAG
 │   ├── evaluation.py        # offline eval: ``python -m src.evaluation {qualitative|metrics|milestone2_rag|eval|all}``
 │   ├── milestone2_rag_eval.py   # hybrid RAG JSON → ``results/milestone2_rag_eval_runs.json``
+│   ├── artifact_fetch.py   # optional: fetch `*_final` if FETCH + base URL in env
 │   └── utils.py             # corpus construction + tokenization utilities
 ├── results/
 │   ├── milestone1_discussion.md   # qualitative retrieval evaluation notes
@@ -286,14 +302,4 @@ make dev       # local Streamlit dev server
 make clean     # remove __pycache__, *.pyc, data/raw downloads, and data/processed/* (except .gitkeep)
 ```
 
-`make clean` deletes local downloads and most processed outputs. Rebuild the **`*_final`** bundle with `milestone3_scaling.ipynb` or `python -m src.build_retrievers` (and `make raw` if source JSONL is missing).
-
-## Reproducibility checklist
-
-1. **Conda:** run **`make install`**, then `conda activate dsci575-ml`. **venv:** `python -m venv .venv` + `pip install -r requirements.txt`.
-2. Run `make raw` to download `Video_Games.jsonl` and `meta_Video_Games.jsonl` under `data/raw/`.
-3. Build the **scaled** retrieval artifacts: run **`notebooks/milestone3_scaling.ipynb`** (or **`python -m src.build_retrievers`**) so `data/processed/` contains the **`*_final`** files listed under *Run the Streamlit app* above.
-4. Copy `.env.example` → `.env` and set **`GROQ_API_KEY`** (and optional **`LLM_MODEL`**) for RAG and `make eval`.
-5. **App:** `conda activate dsci575-ml` → `make dev` (or `streamlit run app/app.py` from venv).
-6. **Optional:** `notebooks/milestone2_rag.ipynb` for additional RAG exploration.
-7. **Eval:** `make eval` and `make metrics` → refreshed `qualitative_eval_runs.csv`, `milestone2_rag_eval_runs.json`, and metric CSVs. Narrative: `results/final_discussion.md`; historical Milestone 1/2 write-ups: `results/milestone1_discussion.md`, `results/milestone2_discussion.md`.
+`make clean` deletes local downloads and most processed outputs. Rebuild the **`*_final`** bundle with `milestone3_scaling.ipynb` or `python -m src.build_retrievers` (and `make raw` if source JSONL is missing). For a full local reproduction sequence, use **Reproducibility** at the top of this README.
