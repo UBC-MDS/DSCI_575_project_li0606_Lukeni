@@ -103,9 +103,7 @@ Copy `.env.example` to `.env` when you need overrides. Do not commit `.env`.
 
 **Paths (retrieval app):** **`PROCESSED_DATA_DIR`** (default `data/processed/`) and **`FEEDBACK_LOG_PATH`** (default `data/processed/app_feedback.csv`).
 
-**Groq API (RAG):** `src/rag_pipeline.py` reads **`GROQ_API_KEY`** and optional **`LLM_MODEL`** (see `.env.example`). Without `GROQ_API_KEY`, the **Search** tab still works; the **RAG** tab shows an error until the key is set.
-
-**Shared key in `.env.example`:** For this student project, `.env.example` may include a **Groq free-tier API key** so the team and graders can run RAG without each registering a key. Treat that value as **public** (anyone with the repo can use or exhaust quota). For private forks, production, or sensitive data, create your own key at [Groq Console](https://console.groq.com/keys) and put it in `.env` only.
+**Groq API (RAG):** `src/rag_pipeline.py` reads **`GROQ_API_KEY`** and optional **`LLM_MODEL`** (see `.env.example`). Without `GROQ_API_KEY`, the **Search** tab still works; the **RAG** tab shows an error until the key is set. Create your own key at [Groq Console](https://console.groq.com/keys) and put it in `.env` only.
 
 ### 4) Dependency changes after `git pull`
 
@@ -176,15 +174,44 @@ You need a **working app on your machine**; retrieval indices are **saved locall
 
 1. **Install the environment** (sections *Setup* → 1–2 above).
 2. **Download raw data** with `make raw` (needed for `milestone1_exploration.ipynb`).
-3. **Build the sample index bundle** — open `notebooks/milestone1_exploration.ipynb` and run through at least:
-   - representative **sample corpus** build and save,
-   - **BM25** build and save,
-   - **semantic (embeddings + FAISS)** build and save.  
-   This writes the notebook sample bundle under `data/processed/`, including:
-   - `video_games_corpus_sample.parquet` or `video_games_corpus_sample.csv`
-   - `bm25_sample_index.pkl`, `bm25_sample_tokens.pkl`
-   - `faiss_sample.index`, `semantic_sample_metadata.pkl`
-4. **Configure `.env`** with `GROQ_API_KEY` (and optionally `LLM_MODEL`) if you want the **RAG** tab; see *Environment variables* above.
+
+3. **Build the retrieval artifacts** 
+
+There are two reproducible ways to build the retrieval artifacts needed by the app.
+
+### Option A: Run the Python build script
+
+This is the cleaner but slower reproducibility path.
+
+```bash
+python -m src.build_retrievers
+```
+
+This should build and save the final retrieval artifacts under `data/processed/`, including:
+
+* `video_games_corpus_final.parquet` (or CSV fallback)
+* `bm25_final_index.pkl`
+* `bm25_final_tokens.pkl`
+* `faiss_final.index`
+* `semantic_final_metadata.pkl`
+
+### Option B: Run the scaling notebook
+
+If the Python build script is too slow or you want the notebook workflow which breaks down the process in detail steps, run all cells in `notebooks/milestone3_scaling.ipynb`
+
+This notebook builds the same final scaled retrieval artifacts and saves them to `data/processed/`.
+
+4. **Configure environment variables**
+
+Create a local `.env` file and set:
+
+```bash
+GROQ_API_KEY=[REPLACE_WITH_YOUR_KEY]
+LLM_PROVIDER=groq
+LLM_MODEL=llama-3.1-8b-instant
+```
+Do not commit `.env` to GitHub.
+
 5. **Start the app** from the repo root:
 
 ```bash
