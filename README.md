@@ -2,9 +2,9 @@
 
 This project implements retrieval over the **Video Games** category of [Amazon Reviews 2023](https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023): **BM25** lexical search, **dense** retrieval (sentence embeddings + FAISS), and **hybrid** ranking via reciprocal rank fusion. It also adds **RAG** (**semantic** or **hybrid** retrieval + **Groq** LLM) over the same review-level corpus. A **Streamlit** application exposes search-only and RAG modes; **offline evaluation** outputs qualitative comparisons, hybrid RAG JSON runs, and precision/recall/MRR-style metrics against labeled queries.
 
-**Release:** [v0.2.0](https://github.com/UBC-MDS/DSCI_575_project_li0606_Lukeni/releases/tag/v0.2.0) 
-Data processing:
-We use the Amazon Reviews 2023 Video_Games category. Each retrieval document is built at the review level and enriched with product metadata. The final retrieval text combines product title, categories, features, description, review title, and review text. Preprocessing includes lowercasing, removing most punctuation, normalizing whitespace, and using whitespace tokenization for BM25. For efficiency, this project uses a representative sample rather than the full category.
+**Release:** [v0.2.0](https://github.com/UBC-MDS/DSCI_575_project_li0606_Lukeni/releases/tag/v0.2.0)
+
+**Corpus scope:** The deployed pipeline and evaluation tools use a **review-level** corpus derived from the Amazon Reviews 2023 **Video_Games** category: **10,000 unique products**, with at most **three reviews per product** retained during construction (typically **~29k–30k** review rows; the exact count is the number of lines in `video_games_corpus_final.parquet` or `.csv` under `data/processed/`). Each document concatenates product title, categories, features, description, review title, and review text. Preprocessing includes lowercasing, removal of most punctuation, whitespace normalization, and whitespace tokenization for BM25. The public category JSONL files are full-category dumps; BM25 and FAISS indices in this repository are built only from the filtered 10k-product subset, not from the entire Amazon Video_Games catalog.
 
 ## Badges
 
@@ -26,8 +26,9 @@ We use the Amazon Reviews 2023 Video_Games category. Each retrieval document is 
 │   ├── raw/                 # downloaded *.jsonl (ignored)
 │   └── processed/           # generated indices and eval outputs (ignored except whitelisted CSVs)
 ├── notebooks/
-│   ├── milestone1_exploration.ipynb  # EDA + preprocessing + sample indices (required for app/eval)
-│   └── milestone2_rag.ipynb          # RAG exploration: Groq checks, semantic vs hybrid, prompts
+│   ├── milestone1_exploration.ipynb  # EDA + early sample indices (optional; dev history)
+│   ├── milestone2_rag.ipynb         # RAG exploration: Groq, semantic vs hybrid, prompts
+│   └── milestone3_scaling.ipynb     # Scaled 10k-product corpus + final BM25 / FAISS artifacts (app input)
 ├── docs/
 │   └── RELEASE_NOTES_v0.2.0.md       # copy-paste body for GitHub Release v0.2.0
 ├── src/
@@ -173,33 +174,27 @@ Requires `curl`. Downloads can take several minutes.
 You need a **working app on your machine**; retrieval indices are **saved locally** (not required to be in Git).
 
 1. **Install the environment** (sections *Setup* → 1–2 above).
-2. **Download raw data** with `make raw` (needed for `milestone1_exploration.ipynb`).
+2. **Download raw data** with `make raw` (required to build the processed corpus and indices from source).
 
-3. **Build the retrieval artifacts** 
+3. **Build the retrieval artifacts**
 
-There are two reproducible ways to build the retrieval artifacts needed by the app.
+The app and `src.retrieval.discover_bundle()` require **one** complete **final** bundle under `data/processed/` (Parquet or CSV corpus plus the four index files). Two equivalent paths:
 
-### Option A: Run the Python build script
-
-This is the cleaner but slower reproducibility path.
+### Option A: Python build entrypoint
 
 ```bash
 python -m src.build_retrievers
 ```
 
-This should build and save the final retrieval artifacts under `data/processed/`, including:
+Writes the scaled artifacts, including:
 
-* `video_games_corpus_final.parquet` (or CSV fallback)
-* `bm25_final_index.pkl`
-* `bm25_final_tokens.pkl`
-* `faiss_final.index`
-* `semantic_final_metadata.pkl`
+* `video_games_corpus_final.parquet` (or `video_games_corpus_final.csv`)
+* `bm25_final_index.pkl`, `bm25_final_tokens.pkl`
+* `faiss_final.index`, `semantic_final_metadata.pkl`
 
-### Option B: Run the scaling notebook
+### Option B: Scaling notebook
 
-If the Python build script is too slow or you want the notebook workflow which breaks down the process in detail steps, run all cells in `notebooks/milestone3_scaling.ipynb`
-
-This notebook builds the same final scaled retrieval artifacts and saves them to `data/processed/`.
+Run all cells in `notebooks/milestone3_scaling.ipynb` to reproduce EDA, filtering, and the same `*_final` outputs.
 
 4. **Configure environment variables**
 
@@ -233,7 +228,7 @@ streamlit run app/app.py
 
 | Tab | What it does | Requirements |
 |-----|----------------|--------------|
-| **Search** | BM25, Semantic, or **Hybrid** (RRF) over the sample index — **no LLM**. Top **10** hits. | Sample bundle in `data/processed/` |
+| **Search** | BM25, Semantic, or **Hybrid** (RRF) over the scaled **final** index — **no LLM**. Top **10** hits. | `*_final` bundle in `data/processed/` (see step 3) |
 | **RAG** | **Semantic RAG** (dense only) or **Hybrid RAG** (BM25 + dense → RRF). **Top 5** reviews feed the prompt. Preset **V1–V3** or custom system prompt. | Same bundle + **`GROQ_API_KEY`** |
 
 How **Semantic RAG** vs **Hybrid RAG** connect to **build_context** and Groq is shown in the **RAG pipeline** section (workflow diagram above).
@@ -242,18 +237,18 @@ Optional: `make install` updates the conda environment **`dsci575-ml`** from `en
 
 ### RAG exploration notebook
 
-Run `notebooks/milestone2_rag.ipynb` **after** the sample indices from `milestone1_exploration.ipynb` exist and `.env` is configured. It records **exploration** (Groq sanity check, semantic vs hybrid retrieval and RAG, prompt-variant comparison, optional exports to `data/processed/milestone2_*`). It is **not** required to launch the Streamlit app.
+Run `notebooks/milestone2_rag.ipynb` after a retrieval bundle exists and `.env` is configured. It is **not** required to launch the app; the production path uses the **`*_final`** artifacts from `milestone3_scaling.ipynb` (or `build_retrievers`).
 
 ## Qualitative evaluation
 
-With the sample retrieval bundle in `data/processed/`:
+With the **final** retrieval bundle in `data/processed/`:
 
 ```bash
 conda activate dsci575-ml
 make eval
 ```
 
-This runs **two** steps: (1) BM25 vs semantic comparison for every query in `data/processed/ground_truth.csv` → `data/processed/qualitative_eval_runs.csv`; (2) **hybrid RAG** on a fixed 10-query set → `results/milestone2_rag_eval_runs.json` (requires **`GROQ_API_KEY`** in `.env`). Discussion notes: `results/milestone1_discussion.md` (retrieval), `results/milestone2_discussion.md` (RAG).
+This runs: (1) BM25 vs semantic comparison for every query in `data/processed/ground_truth.csv` → `data/processed/qualitative_eval_runs.csv`; (2) **hybrid RAG** on a fixed 10-query set → `results/milestone2_rag_eval_runs.json` (requires **`GROQ_API_KEY`** in `.env`). The write-ups in `results/milestone1_discussion.md` and `results/milestone2_discussion.md` reference runs on a **1,000-row development index**; after scaling, re-executing these commands regenerates the CSV/JSON against the **10,000-product** corpus. Interpretation of the refresh is summarized in `results/final_discussion.md`.
 
 To run only the qualitative CSV or only the RAG JSON:
 
@@ -264,16 +259,16 @@ PYTHONPATH=. python -m src.evaluation milestone2_rag
 
 ### Retrieval metrics
 
-With `relevant_doc_ids` filled in `data/processed/ground_truth.csv` and the same sample artifacts as above:
+With `relevant_doc_ids` filled in `data/processed/ground_truth.csv` and the **final** artifacts above:
 
 ```bash
 conda activate dsci575-ml
 make metrics
 ```
 
-This writes `data/processed/retrieval_metrics_summary.csv` and `retrieval_metrics_per_query.csv`. See `results/milestone1_discussion.md` for interpretation.
+This writes `data/processed/retrieval_metrics_summary.csv` and `data/processed/retrieval_metrics_per_query.csv`. Ground-truth labels were defined when the index used a **1k-row** sample; `doc_id` is assigned by **row order** in each build, so **aggregate P@k / R@k / MRR on the scaled corpus are not directly comparable** to the Milestone 1 table in `milestone1_discussion.md` as “the same” relevance experiment—see `results/final_discussion.md` for a concise discussion. Use the updated CSVs to compare methods **on the current index** or relabel for strict relevance on the 10k-product corpus.
 
-Both steps use the same index bundle as the Streamlit app (`src/retrieval.discover_bundle()` loads the **notebook sample** bundle only). To run qualitative export and metrics in one command:
+`src/retrieval.discover_bundle()` loads the **final** bundle only. To run qualitative export plus metrics (without the RAG JSON step):
 
 ```bash
 PYTHONPATH=. python -m src.evaluation all
@@ -291,14 +286,14 @@ make dev       # local Streamlit dev server
 make clean     # remove __pycache__, *.pyc, data/raw downloads, and data/processed/* (except .gitkeep)
 ```
 
-`make clean` deletes local downloads and processed outputs. Regenerate indices by re-running the notebook (and `make raw` if needed).
+`make clean` deletes local downloads and most processed outputs. Rebuild the **`*_final`** bundle with `milestone3_scaling.ipynb` or `python -m src.build_retrievers` (and `make raw` if source JSONL is missing).
 
 ## Reproducibility checklist
 
-1. **Conda:** run **`make install`** (or `conda env update -f environment.yml --prune`), then `conda activate dsci575-ml`. **venv:** `python -m venv .venv` + `pip install -r requirements.txt`.
+1. **Conda:** run **`make install`**, then `conda activate dsci575-ml`. **venv:** `python -m venv .venv` + `pip install -r requirements.txt`.
 2. Run `make raw` to download `Video_Games.jsonl` and `meta_Video_Games.jsonl` under `data/raw/`.
-3. Run `notebooks/milestone1_exploration.ipynb` through corpus + BM25 + semantic cells so `data/processed/` contains the **sample** bundle (see *Run the Streamlit app*).
+3. Build the **scaled** retrieval artifacts: run **`notebooks/milestone3_scaling.ipynb`** (or **`python -m src.build_retrievers`**) so `data/processed/` contains the **`*_final`** files listed under *Run the Streamlit app* above.
 4. Copy `.env.example` → `.env` and set **`GROQ_API_KEY`** (and optional **`LLM_MODEL`**) for RAG and `make eval`.
 5. **App:** `conda activate dsci575-ml` → `make dev` (or `streamlit run app/app.py` from venv).
-6. **Optional:** run `notebooks/milestone2_rag.ipynb` for RAG exploration outputs.
-7. **Eval:** `make eval` → `data/processed/qualitative_eval_runs.csv` + `results/milestone2_rag_eval_runs.json`. Discussion: `results/milestone1_discussion.md`, `results/milestone2_discussion.md`.
+6. **Optional:** `notebooks/milestone2_rag.ipynb` for additional RAG exploration.
+7. **Eval:** `make eval` and `make metrics` → refreshed `qualitative_eval_runs.csv`, `milestone2_rag_eval_runs.json`, and metric CSVs. Narrative: `results/final_discussion.md`; historical Milestone 1/2 write-ups: `results/milestone1_discussion.md`, `results/milestone2_discussion.md`.

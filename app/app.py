@@ -202,8 +202,8 @@ def main() -> None:
     except FileNotFoundError as e:
         st.error(str(e))
         st.info(
-            "Retrieval indices were not found. Place the notebook sample bundle under `data/processed/` "
-            "or set `PROCESSED_DATA_DIR`. See the README section on retrieval artifacts."
+            "Retrieval indices were not found. Build the scaled `*_final` bundle under `data/processed/` "
+            "(see README) or set `PROCESSED_DATA_DIR`."
         )
         st.stop()
     except Exception as e:
@@ -352,7 +352,7 @@ def main() -> None:
                     st.markdown(
                         """
 **How to ask (your query in the box):** Write in plain English, as you would to another shopper—name a **genre**, **platform**, or **product need** (e.g. *“relaxing story-driven games”*, *“wireless controller with good battery”*, *“Is this headset good for footsteps in FPS?”*).  
-Specific questions and short comparisons work best. The assistant only uses **retrieved review text** from this project’s sample index; if the corpus has little on your topic, answers may be vague or say the context is insufficient—that is expected.
+Specific questions and short comparisons work best. The assistant only uses **retrieved review text** from the scaled review-level corpus; if the corpus has little on your topic, answers may be vague or say the context is insufficient—that is expected.
 
 **System prompt:** Use a **preset** (V1–V3, same strings as in `src/rag_pipeline.py`) or choose **Custom** to write your own instructions. The app always appends the same *Context* and *Question* blocks after your system text. Custom prompts are capped for safety (see form).
                         """
