@@ -99,23 +99,58 @@ We rebuilt indices on the **final** scaled bundle (`discover_bundle` → `label=
 
 ## Step 2: Additional Feature (state which option you chose)
 
-### What You Implemented
+**Option chosen:** **Option 4 — Deploy the application** (public, persistent URL).
 
-- Description of the feature
-- Key results or examples
-  
+### What we implemented
+
+- **Public app:** The Streamlit interface is hosted on **Streamlit Community Cloud** at [**https://dsci575li0606lukeni.streamlit.app/**](https://dsci575li0606lukeni.streamlit.app/) (BM25, semantic, hybrid **Search**; **RAG** with Groq). The link is also listed under **Outcomes** in the root `README.md`.
+- **Why the main repo does not store indices:** The scaled `*_final` artifacts (corpus CSV, BM25 and FAISS-related files) total on the order of **hundreds of MB**; they are listed in `.gitignore` so clones stay small and Git history does not bloat.
+- **Where the large files live:** We version them in a **separate public repository** as **GitHub Release assets** (tag `0.0.1`): [JayLBean/data_model_storage — Release 0.0.1](https://github.com/JayLBean/data_model_storage/releases/tag/0.0.1). The five objects match what `src.retrieval.discover_bundle()` expects for the `final` bundle.
+- **How the hosted app gets data:** The application repository is **connected to Streamlit Cloud** in the usual way (GitHub integration: **pull** the app code on deploy). In **Secrets**, we set **`GROQ_API_KEY`**, **`FETCH_REMOTE_ARTIFACTS=1`**, and **`REMOTE_ARTIFACTS_BASE_URL`** to the release download prefix. At startup, `src.artifact_fetch` (called from `app/app.py`) **streams** any missing `*_final` files into the configured `PROCESSED_DATA_DIR` before indices load. Local development is unchanged: build `data/processed/` with `milestone3_scaling.ipynb` or `python -m src.build_retrievers` and no remote fetch is required.
+- **Design choice:** A **dedicated storage repo** plus **per-release** URLs is simple for this course, avoids LFS on the app repo, and matches “code in one place, blobs versioned under another.”
+
 ## Step 3: Improve Documentation and Code Quality
 
-- created src/config.py and updated build_retriver.py to remove hardcoded path
-- remove api key from .env.example
-- ensure all functions have docstring
-
-
 ### Documentation Update
-- Summary of `README` improvements
+
+- **`README.md`:** Describes **corpus scope** (10k products, review-level ~29.6k rows), **reproducibility** (environment, `make raw`, scaling notebook or `build_retrievers`, `.env`, `make dev`, optional `make eval` / `make metrics` and other notebooks), and **outcomes** (public Streamlit URL, this file, and the **asset** release for large files—not a deploy tutorial for third parties).
+- **`results/final_discussion.md`:** Single written report for the final milestone (this document).
+- **`.env.example`:** Local Groq and optional `FETCH` / `REMOTE_ARTIFACTS_BASE_URL` for the hosted case; no secrets in committed files.
 
 ### Code Quality Changes
-- Summary of cleanups
+
+- **`src/config.py`:** Central paths and defaults; builds use the same `*_final` names as the app.
+- **`src/retrieval.py`:** `discover_bundle()` loads only the **scaled `final`** artifact set; removed reliance on the old sample filenames for production.
+- **`src/artifact_fetch.py`:** Minimal helper to download the five `*_final` files when `FETCH_REMOTE_ARTIFACTS` and `REMOTE_ARTIFACTS_BASE_URL` are set (hosted Streamlit).
+- **Secrets:** API keys are read from **environment** / Streamlit **Secrets**, not from source; `.env` is gitignored.
+- **Docstrings:** New and updated modules follow the one-line (or more) docstring pattern where appropriate.
+- **`.gitignore`:** Continues to exclude `data/raw/*`, `data/processed/*` (with small tracked CSV exceptions as before), and `.env`.
 
 ## Step 4: Cloud Deployment Plan
-(See Step 4 above for required subsections)
+
+This section meets the handout’s requirement to assume a **hypothetical** production stack on a major cloud (we use **AWS** below) and to cover **data placement**, **compute / concurrency / LLM**, and **updates**. The **Streamlit + sub-repo release** stack above is our **current** class demo; the following is a **forward-looking** design.
+
+### 1. Data storage
+
+| Asset | **Current (course)** | **Planned on AWS (example)** |
+|--------|----------------------|------------------------------|
+| **Raw** reviews + meta JSONL | Local / optional `make raw`; not on Streamlit by default | **S3** bucket prefix `s3://…/raw/` (or AWS Open Data / curated snapshot); access via IAM roles for batch jobs, not the browser. |
+| **Processed** review-level corpus (Parquet/CSV) | `video_games_corpus_final.*` in GitHub Release or local `data/processed/` | **S3** `…/processed/corpus/corpus_v{n}.parquet` with version prefix or object tags. |
+| **Vector (FAISS) index** + **semantic metadata** | `faiss_final.index`, `semantic_final_metadata.pkl` in the same release or local disk | **S3** `…/indices/semantic/…`; containers or Lambdas read via **pre-signed URL** or **instance profile**; optional **EFS** mount if a service needs POSIX paths and shared read across tasks. |
+| **BM25** (pickles, token lists) | `bm25_final_*.pkl` — same as above | **S3** `…/indices/bm25/…` next to versioned semantic artifacts so each **environment** (dev/stage/prod) points at one **immutable** prefix. |
+
+**Rationale:** S3 is durable, pay-per-GB, and supports **versioning** and **lifecycle** rules for old index generations.
+
+### 2. Compute
+
+- **Where the app runs (AWS pattern):** **Amazon ECS on Fargate** or **App Runner** (or **EKS** if we later split services): one **container image** per release that contains the app code and Python stack but **not** the multi-hundred-MB indices (or only a small cache). **CloudFront** in front of **Application Load Balancer** can serve static assets and TLS if we add a custom domain.
+- **Concurrent users:** The Streamlit *process* model is not ideal for high concurrency; in AWS we would either run **one task per user session** (expensive) or replace the UI with a **stateless API** (FastAPI) + separate front end, and scale out **Fargate tasks** or use **API Gateway** + **Lambda** for throttled, short-lived work. For **RAG** specifically, the heavy work is **embedding/vector search** (CPU/GPU) and **LLM** calls.
+- **LLM inference:** We continue to use an **API** (today **Groq**; in AWS one could add **Amazon Bedrock** for managed models or **SageMaker** for a dedicated endpoint). A production setup would **route** traffic: default answers through Groq/Bedrock, with **SageMaker** for optional fine-tuned or larger models, and **IAM + usage quotas** to control cost. **“AI + collaboration”** in operations means: use **CloudWatch** alarms, **SageMaker Model Monitor** or **Bedrock** evaluation jobs for **quality regression** checks, and **human-in-the-loop** relabeling (e.g. new `ground_truth` rows in S3) to refresh offline metrics after corpus updates.
+
+### 3. Streaming / updates
+
+- **New products / reviews:** A **scheduled** job (e.g. **EventBridge** → **Fargate task** or **AWS Glue**) runs the same **notebook/build pipeline** on fresh raw data, writes a **new** `corpus_v{n}` and indices to **S3**, and registers a **version id** in **SSM Parameter Store** or a small **DynamoDB** row so the app reads **only the active version**.
+- **Zero-downtime cutover:** The web tier reads **version** from config; after validation, flip the pointer to the new S3 prefix; **stale** objects can be expired under **lifecycle** policy.
+- **How the pipeline “stays up to date”:** Re-run ingestion when **Amazon Reviews** snapshots or internal feeds change; **monitor** drift (e.g. recall on a fixed query set stored in S3) before promoting a new index to production.
+
+This AWS sketch aligns with what we already practice at small scale—**versioned artifacts**, **separation of code and data**, and **API-based LLM**—while describing a path to **managed storage (S3)**, **elastic compute**, and **governed model usage** in production.

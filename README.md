@@ -1,8 +1,12 @@
 # DSCI 575 Project
 
+![Python](https://img.shields.io/badge/python-3.x-informational)
+[![Public app (Streamlit)](https://img.shields.io/badge/dsci575li0606lukeni.streamlit.app-open-FF4B4B?logo=streamlit)](https://dsci575li0606lukeni.streamlit.app/)
+![dotenv](https://img.shields.io/badge/config-.env%20%2B%20python--dotenv-yellow)
+
 This project implements retrieval over the **Video Games** category of [Amazon Reviews 2023](https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023): **BM25** lexical search, **dense** retrieval (sentence embeddings + FAISS), and **hybrid** ranking via reciprocal rank fusion. It also adds **RAG** (**semantic** or **hybrid** retrieval + **Groq** LLM) over the same review-level corpus. A **Streamlit** application exposes search-only and RAG modes; **offline evaluation** outputs qualitative comparisons, hybrid RAG JSON runs, and precision/recall/MRR-style metrics against labeled queries.
 
-**Release:** [v0.2.0](https://github.com/UBC-MDS/DSCI_575_project_li0606_Lukeni/releases/tag/v0.2.0)
+**Release:** [v0.3.0](https://github.com/UBC-MDS/DSCI_575_project_li0606_Lukeni/releases/tag/v0.3.0)
 
 **Corpus scope:** The pipeline uses a **review-level** corpus from the Amazon Reviews 2023 **Video_Games** category: **10,000 unique products** and at most **three reviews per product** in the build (typically **~29k–30k** review rows; the exact row count is in `data/processed/video_games_corpus_final.*`). Each document combines product title, categories, features, description, review title, and review text, with the preprocessing described in the scaling notebook. Only this filtered subset is indexed (not the full category JSONL).
 
@@ -20,12 +24,6 @@ This project implements retrieval over the **Video Games** category of [Amazon R
 4. **Environment variables:** copy `.env.example` to `.env` and set at least **`GROQ_API_KEY`** for the RAG tab.
 5. **Run the app:** from the repo root, `make dev` or `streamlit run app/app.py` and open the local URL (default `http://127.0.0.1:8501`).
 6. **Optional — notebooks / Make:** `notebooks/milestone2_rag.ipynb` for additional RAG experiments; `make eval` and `make metrics` for the offline tables (see *Qualitative evaluation*). Earlier milestone write-ups: `results/milestone1_discussion.md`, `results/milestone2_discussion.md`.
-
-## Badges
-
-![Python](https://img.shields.io/badge/python-3.x-informational)
-![Streamlit](https://img.shields.io/badge/app-Streamlit-FF4B4B)
-![dotenv](https://img.shields.io/badge/config-.env%20%2B%20python--dotenv-yellow)
 
 ## Repository structure
 
