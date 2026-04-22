@@ -1,7 +1,7 @@
 """
 Offline evaluation: qualitative comparison CSV and/or retrieval metrics.
 
-Uses the same **notebook sample** bundle as the Streamlit app (``src.retrieval.discover_bundle``).
+Uses the same **scaled final** bundle as the Streamlit app (``src.retrieval.discover_bundle``).
 
 Examples::
 
