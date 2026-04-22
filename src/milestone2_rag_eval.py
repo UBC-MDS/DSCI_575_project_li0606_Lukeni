@@ -3,7 +3,7 @@ Milestone 2 qualitative RAG eval: run hybrid RAG on fixed queries, write JSON fo
 
 Output: ``results/milestone2_rag_eval_runs.json`` (by default).
 
-Requires ``GROQ_API_KEY`` and the same notebook sample bundle as the Streamlit app.
+Requires ``GROQ_API_KEY`` and the same scaled ``*_final`` retrieval bundle as the Streamlit app.
 """
 
 from __future__ import annotations

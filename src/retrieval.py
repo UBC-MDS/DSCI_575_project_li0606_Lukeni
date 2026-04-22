@@ -1,8 +1,9 @@
 """
 Index discovery, BM25 + FAISS loading, and hybrid (RRF) search.
 
-``discover_bundle()`` loads only the **notebook sample** artifact set (see README). The Streamlit app
-and ``python -m src.evaluation`` use that bundle.
+``discover_bundle()`` loads the **scaled final** artifact set under ``data/processed/`` (see README):
+``video_games_corpus_final`` plus BM25 and FAISS files with the ``*_final`` filename convention.
+The Streamlit app and ``python -m src.evaluation`` use this bundle.
 """
 
 from __future__ import annotations
@@ -41,50 +42,50 @@ def _first_existing(processed: Path, names: list[str]) -> Path | None:
 
 def discover_bundle(processed: Path | None = None) -> RetrievalBundle:
     """
-    Load the **notebook sample bundle** only — filenames match
-    ``notebooks/milestone1_exploration.ipynb`` (representative sample corpus, BM25, semantic).
+    Load the **scaled final** retrieval bundle only.
 
-    A separate full-corpus pipeline exists in ``src/build_retrievers.py`` for local experiments;
-    it is **not** loaded here, so remote deploy only needs the notebook artifacts.
+    Filenames match ``notebooks/milestone3_scaling.ipynb`` and ``src/build_retrievers.py``
+    (``video_games_corpus_final`` plus ``bm25_final_*``, ``faiss_final.index``,
+    ``semantic_final_metadata.pkl``).
     """
     processed = processed or _processed_dir()
     if not processed.is_dir():
         raise FileNotFoundError(
             f"Processed data directory does not exist: {processed}. "
-            "Set PROCESSED_DATA_DIR in .env or create the notebook sample bundle first."
+            "Set PROCESSED_DATA_DIR or build artifacts under `data/processed/` first."
         )
 
     corpus = _first_existing(
         processed,
         [
-            "video_games_corpus_sample.parquet",
-            "video_games_corpus_sample.csv",
+            "video_games_corpus_final.parquet",
+            "video_games_corpus_final.csv",
         ],
     )
     bundle = RetrievalBundle(
-        label="sample",
+        label="final",
         corpus_path=corpus if corpus is not None else processed / "__missing__.csv",
-        bm25_index=processed / "bm25_sample_index.pkl",
-        bm25_tokens=processed / "bm25_sample_tokens.pkl",
-        faiss_index=processed / "faiss_sample.index",
-        semantic_meta=processed / "semantic_sample_metadata.pkl",
+        bm25_index=processed / "bm25_final_index.pkl",
+        bm25_tokens=processed / "bm25_final_tokens.pkl",
+        faiss_index=processed / "faiss_final.index",
+        semantic_meta=processed / "semantic_final_metadata.pkl",
     )
 
     required: list[tuple[str, Path | None]] = [
-        ("corpus (video_games_corpus_sample.parquet or .csv)", corpus),
-        ("bm25_sample_index.pkl", bundle.bm25_index),
-        ("bm25_sample_tokens.pkl", bundle.bm25_tokens),
-        ("faiss_sample.index", bundle.faiss_index),
-        ("semantic_sample_metadata.pkl", bundle.semantic_meta),
+        ("corpus (video_games_corpus_final.parquet or .csv)", corpus),
+        ("bm25_final_index.pkl", bundle.bm25_index),
+        ("bm25_final_tokens.pkl", bundle.bm25_tokens),
+        ("faiss_final.index", bundle.faiss_index),
+        ("semantic_final_metadata.pkl", bundle.semantic_meta),
     ]
     missing = [f"{name} -> {p}" for name, p in required if p is None or not Path(p).is_file()]
     if missing:
         raise FileNotFoundError(
-            "No complete notebook sample bundle under "
+            "No complete final (scaled) retrieval bundle under "
             f"{processed.resolve()}. "
-            "Run `notebooks/milestone1_exploration.ipynb` through the sample corpus, BM25, and semantic "
-            "sections (or obtain these files from a teammate) and ensure PROCESSED_DATA_DIR points at "
-            "the folder that contains them. "
+            "Build artifacts with `python -m src.build_retrievers`, run "
+            "`notebooks/milestone3_scaling.ipynb`, or obtain the `*_final` files. "
+            "Ensure PROCESSED_DATA_DIR points at the directory that contains them. "
             f"Missing: {'; '.join(missing)}"
         )
 

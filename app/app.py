@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from src.artifact_fetch import ensure_remote_artifacts, needs_remote_download  # noqa: E402
 from src.retrieval import discover_bundle, hybrid_search, load_retrievers  # noqa: E402
 
 TEXT_PREVIEW = 200
@@ -197,13 +198,23 @@ def main() -> None:
     )
     st.markdown(_CARD_CSS, unsafe_allow_html=True)
 
+    processed_dir = Path(os.getenv("PROCESSED_DATA_DIR", "data/processed"))
+    if needs_remote_download(processed_dir):
+        with st.spinner("Downloading retrieval indices (first run, ~400 MB)…"):
+            try:
+                ensure_remote_artifacts(processed_dir)
+            except (FileNotFoundError, OSError) as e:
+                st.error(str(e))
+                st.info("Set `FETCH_REMOTE_ARTIFACTS=1` and `REMOTE_ARTIFACTS_BASE_URL` in the host’s secrets (see README).")
+                st.stop()
+
     try:
         bundle, bm25, semantic = _cached_retrievers()
     except FileNotFoundError as e:
         st.error(str(e))
         st.info(
-            "Retrieval indices were not found. Place the notebook sample bundle under `data/processed/` "
-            "or set `PROCESSED_DATA_DIR`. See the README section on retrieval artifacts."
+            "Retrieval indices were not found. Build the `*_final` bundle under `data/processed/`, set "
+            "`PROCESSED_DATA_DIR`, or set `FETCH_REMOTE_ARTIFACTS` + `REMOTE_ARTIFACTS_BASE_URL` on the host."
         )
         st.stop()
     except Exception as e:
@@ -352,7 +363,7 @@ def main() -> None:
                     st.markdown(
                         """
 **How to ask (your query in the box):** Write in plain English, as you would to another shopper—name a **genre**, **platform**, or **product need** (e.g. *“relaxing story-driven games”*, *“wireless controller with good battery”*, *“Is this headset good for footsteps in FPS?”*).  
-Specific questions and short comparisons work best. The assistant only uses **retrieved review text** from this project’s sample index; if the corpus has little on your topic, answers may be vague or say the context is insufficient—that is expected.
+Specific questions and short comparisons work best. The assistant only uses **retrieved review text** from the scaled review-level corpus; if the corpus has little on your topic, answers may be vague or say the context is insufficient—that is expected.
 
 **System prompt:** Use a **preset** (V1–V3, same strings as in `src/rag_pipeline.py`) or choose **Custom** to write your own instructions. The app always appends the same *Context* and *Question* blocks after your system text. Custom prompts are capped for safety (see form).
                         """

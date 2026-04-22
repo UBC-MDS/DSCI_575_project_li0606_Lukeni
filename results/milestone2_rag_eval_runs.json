@@ -1,205 +1,205 @@
 {
-  "bundle_label": "sample",
+  "bundle_label": "final",
   "top_k": 5,
   "system_prompt": "SYSTEM_PROMPT_V1",
   "results": [
     {
       "id": 1,
       "query": "best racing game with fun tracks",
-      "answer": "Based on the provided context, I would recommend the \"LittleBigPlanet Karting - Playstation 3\" (ASIN: B0050SX00Y). This game has a rating of 5.0 and multiple reviews mentioning that it's a fun game with a variety of difficulties suitable for players of all ages, which suggests that it has enjoyable tracks.",
+      "answer": "Based on the reviews, I would recommend the \"LittleBigPlanet Karting - Playstation 3\" (ASIN: B0050SX00Y) as the best racing game with fun tracks. This game has received a 5.0 rating from multiple reviewers and is described as a fun game for kids and adults of all ages, with customizable carts, sack guy, and pod. Reviewers have also mentioned that it has a good variety of different difficulties, making it suitable for players of different ages and skill levels.",
       "retrieved_titles_top5": [
         "LittleBigPlanet Karting - Playstation 3",
-        "Phar Lap Horse Racing Challenge - Nintendo Switch",
+        "Classic British Motor Racing - Nintendo Wii",
         "LittleBigPlanet Karting - Playstation 3",
-        "Burnout Revenge",
+        "Gravel - PlayStation 4",
         "LittleBigPlanet Karting - Playstation 3"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_17602",
-        "doc_860",
-        "doc_37695",
-        "doc_909",
-        "doc_22239"
+        "doc_13963",
+        "doc_24268",
+        "doc_15525",
+        "doc_3372",
+        "doc_16833"
       ],
       "unique_doc_ids_in_top5": 5
     },
     {
       "id": 2,
       "query": "story-rich scary game with dark atmosphere",
-      "answer": "Based on the provided context, the following games fit the description of a \"story-rich scary game with dark atmosphere\":\n\n1. Fatal Frame 2: Crimson Butterfly (ASIN: B0000AI1KK) - described as \"one of the best survival horror games out there\" with a \"great story\" and \"atmosphere the developers created\" that \"makes you anticipate when that scary moment would be but never really giving you it\".\n2. Scratches: Directors Cut (ASIN: B000KMCF0G) - described as \"dark\" with \"dark ambiance, dark motivations, dark secrets\" and a \"foreboding (dare I say downright evil??) atmosphere without gore\".\n3. Among the Sleep: Enhanced Edition (ASIN: B07NDZZHPF) - although the reviewer hated the game, it is described as a scary game with a dark atmosphere, but the context does not suggest it is story-rich.\n4. Little Nightmares (ASIN: B01NAUEFNR) - described as \"scary AF\" with a \"dark and creepy\" atmosphere, but the context does not suggest it is story-rich.\n\nHowever, the review for Scratches: Directors Cut provides the most detailed description of a story-rich scary game with a dark atmosphere.",
+      "answer": "Based on the reviews, I would recommend the game \"Among the Sleep - PlayStation 4\" (ASIN: B01IPARS7Y). \n\nReviews indicate that it's a scary game with a child's perspective (from one review), and one reviewer called it \"scary and sad\". Another reviewer mentioned a \"trick ending\", which implies that the game has a compelling story.",
       "retrieved_titles_top5": [
-        "Fatal Frame 2: Crimson Butterfly",
-        "Among the Sleep: Enhanced Edition - Nintendo Switch",
-        "Little Nightmares - Xbox One [Digital Code]",
-        "Scratches: Directors Cut - PC",
+        "Among the Sleep - PlayStation 4",
+        "The Dark Pictures: House of Ashes - PlayStation 5",
+        "Among the Sleep - PlayStation 4",
+        "The Dark Pictures: House of Ashes - PlayStation 5",
         "Among the Sleep - PlayStation 4"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_48299",
-        "doc_495",
-        "doc_48637",
-        "doc_98",
-        "doc_3521"
+        "doc_26868",
+        "doc_11058",
+        "doc_25807",
+        "doc_15517",
+        "doc_3396"
       ],
       "unique_doc_ids_in_top5": 5
     },
     {
       "id": 3,
       "query": "good wireless PS5 controller with long battery life",
-      "answer": "Based on the provided reviews, it seems that the Sony PlayStation Dualsense Wireless Controller (ASIN: B08GSL374K) has received positive reviews, but there is no mention of its battery life. However, the PowerA Enhanced Wireless Controller for Nintendo Switch (ASIN: B0BCHWZX95) has been praised for its battery life, lasting a long time. Unfortunately, there is no direct review for a \"good wireless PS5 controller with long battery life\" in the provided context.",
+      "answer": "Based on the provided reviews, it seems that the VidPPluing Wireless Controller (ASIN: B0BJJ2W8Q6) is a good option for a wireless PS5 controller. The review mentions that it \"synced really easily\" with the PS4 and there was \"no lag while playing\" for about 2 hours. It also has a decent battery charge while wireless. However, it's rated for the PS4/Pro/Slim consoles, not specifically the PS5, but it might still work.",
       "retrieved_titles_top5": [
         "HyperX Cloud II Wireless - Gaming Headset for PC, PS4/PS5, Nintendo Switch, Long Lasting Battery Up to 30 Hours, 7.1 Surround Sound, Memory Foam, Detachable Noise Cancelling Microphone, Mic Monitoring",
-        "Sony PlayStation Dualsense Wireless Controller - PlayStation 5",
+        "VidPPluing Wireless Controller for PS4/Pro/Slim Consoles, Game Remote Controller with 6-Axis Motion Sensor/Audio Function/Charging Cable-Red",
         "HyperX Cloud II Wireless - Gaming Headset for PC, PS4/PS5, Nintendo Switch, Long Lasting Battery Up to 30 Hours, 7.1 Surround Sound, Memory Foam, Detachable Noise Cancelling Microphone, Mic Monitoring",
-        "PowerA Enhanced Wireless Controller for Nintendo Switch - Mario Silhouette",
-        "HyperX Cloud II Wireless - Gaming Headset for PC, PS4/PS5, Nintendo Switch, Long Lasting Battery Up to 30 Hours, 7.1 Surround Sound, Memory Foam, Detachable Noise Cancelling Microphone, Mic Monitoring"
+        "Batarang Wireless Controller for PS3",
+        "PHOINIKAS Wireless Gaming Headset with Cute Cat Ears, Wired for PS5, PS4, PC, Nintendo Switch, Q9 Over Ear Kitty Headphones with Detachable Mic, Bluetooth Headphones for Phone, Gift for Girls (Pink)"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_11300",
-        "doc_990",
-        "doc_15042",
-        "doc_3",
-        "doc_44636"
+        "doc_601",
+        "doc_14737",
+        "doc_1306",
+        "doc_20119",
+        "doc_21961"
       ],
       "unique_doc_ids_in_top5": 5
     },
     {
       "id": 4,
       "query": "relaxing cozy game for stress relief",
-      "answer": "Based on the reviews, I would recommend the following games for a relaxing, cozy experience for stress relief:\n\n1. Zenses: Rainforest Edition - Nintendo DS (ASIN: B0013LTP6U) - This game is described as \"relaxing\" with \"relaxing music\" and is a good option for unwinding.\n2. Animal Crossing: New Horizons (Physical) & Happy Home Paradise [Digital Code] - Nintendo Switch (ASIN: B087NNZZM8) - The review mentions that it's a \"relaxing video game\" that provides a \"low stress\" experience with quests and a system of rewards.\n3. Space Hack - PC (ASIN: B000BUPE2I) - The review describes it as a \"great, semi mindless\" game that's a nice break from other, more stressful games.\n\nThese games may help provide a relaxing and cozy experience for stress relief.",
+      "answer": "Based on the product reviews, I would recommend the following games for stress relief:\n\n1. Animal Crossing New Horizons Switch - (UK VERSION) (ASIN: B07SMRM43T) - Reviewers mention that it helps relieve stress and anxiety.\n2. Zenses: Rainforest Edition - Nintendo DS (ASIN: B0013LTP6U) - Reviewers describe it as relaxing and a good game to unwind.\n3. Murder She Wrote - PC (ASIN: B002EKMFX4) - A reviewer mentions that it's a fun way to pass the time while relaxing.\n\nThese games seem to be great options for stress relief and relaxation.",
       "retrieved_titles_top5": [
+        "Murder She Wrote - PC",
+        "Animal Crossing New Horizons Switch - (UK VERSION)",
         "Zenses: Rainforest Edition - Nintendo DS",
-        "Dead by Daylight - Xbox One",
-        "Animal Crossing: New Horizons (Physical) & Happy Home Paradise [Digital Code] - Nintendo Switch",
-        "Space Hack - PC",
-        "The Sims 3: Outdoor Living Stuff - PC/Mac"
+        "Build-a-lot 3: Passport to Europe [Download]",
+        "Zenses: Rainforest Edition - Nintendo DS"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_8449",
-        "doc_651",
-        "doc_42496",
-        "doc_691",
-        "doc_1270"
+        "doc_25888",
+        "doc_4075",
+        "doc_23388",
+        "doc_26148",
+        "doc_7603"
       ],
       "unique_doc_ids_in_top5": 5
     },
     {
       "id": 5,
       "query": "competitive online FPS with a large player base",
-      "answer": "Based on the reviews provided, it seems that the competitive online FPS with a large player base is Overwatch - Game of the Year Edition. \n\nThis is mentioned in the review for ASIN: B017QU5KLK, where the reviewer states that \"there's always online action available if you want\" and that the matchmaking is \"very good and doesn't put you in with people who are out of your league skill-wise.\"",
+      "answer": "Based on the reviews, it seems that the Razer Gigantus v2 Cloth Gaming Mouse Pad (3XL) (ASIN: B09S95BGBV) is recommended for FPS gaming.\n\nHowever, regarding a competitive online FPS with a large player base, one review mentions the game \"Rocket League\" (ASIN: B013XJ2M8M) and recommends it, calling it \"totally worth it!\" and stating it's the most fun they've had playing a video game.\n\nAnother review for Rocket League (ASIN: B013XJ2M8M) also gives it a positive review, although one review mentions that \"Rocket League\" might not be suitable for all ages due to download difficulties.",
       "retrieved_titles_top5": [
         "Razer Gigantus v2 Cloth Gaming Mouse Pad (3XL): Thick, High-Density Foam - Non-Slip Base - Classic Black",
-        "Rocket League: Collector's Edition - Nintendo Switch",
-        "Ratchet & Clank: Full Frontal Assault - Playstation 3",
-        "MySims Party - Nintendo DS",
-        "Overwatch - Game of the Year Edition - Xbox One"
+        "Rocket League [Online Game Code]",
+        "Activision James Bond 007: GoldenEye (Nintendo Wii)",
+        "Rocket League [Online Game Code]",
+        "Tom Clancy's The Division 2 - PlayStation 4 Gold Steelbook Edition"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_4898",
-        "doc_239",
-        "doc_25335",
-        "doc_811",
-        "doc_16250"
+        "doc_4628",
+        "doc_23012",
+        "doc_4650",
+        "doc_18687",
+        "doc_638"
       ],
       "unique_doc_ids_in_top5": 5
     },
     {
       "id": 6,
       "query": "Steam Deck games that work well for travel",
-      "answer": "Based on the provided context, it appears that the following Steam Deck games may be suitable for travel:\n\n1. RollerCoaster Tycoon Gold Edition: RollerCoaster Tycoon / Loopy Landscapes / Corkscrew Follies (ASIN: B00006471Z) - There is no specific mention of travel in the review, but it's a single-player game that might be enjoyable during travel.\n\n2. The Sims 3 Island Paradise (ASIN: B00C9DL1HC) - This game is an expansion pack for The Sims 3 and might be a good choice for travel due to its engaging gameplay.\n\nNote that there is no direct mention of Steam Deck games that work well for travel in the provided context.",
+      "answer": "Unfortunately, the context does not provide information about specific Steam Deck games that work well for travel. It does mention RollerCoaster Tycoon Gold Edition (ASIN: B00006471Z) as one of the user's top 3 favorite games, but it does not mention travel as a consideration.\n\nHowever, RollerCoaster Tycoon Gold Edition (ASIN: B00006471Z) is considered a fun and engaging game by the user, and it may be suitable for travel if you have the necessary hardware to play it on the go.\n\nIt's worth noting that the context does not provide information about games specifically designed for the Steam Deck. If you're looking for games that work well for travel on the Steam Deck, you may want to consider searching for reviews that mention portability or travel as a consideration.",
       "retrieved_titles_top5": [
-        "KUNSLUCK Foldable Stand Base for Steam Deck/ROG Ally, Upgraded Adjustable&Portable Steam Deck Stand with Anti-slip Silicone Pad, Steam Deck/ROG Ally Dock Accessories",
+        "Feirsh Carrying Case for Steam Deck, Portable Steam Deck Carry Case with Larger Storage, Protective Travel Steam Case Pounch Hard Shell Case for Steam Deck Console and Accessories",
         "RollerCoaster Tycoon Gold Edition: RollerCoaster Tycoon / Loopy Landscapes / Corkscrew Follies",
         "Stream Deck Carrying Case,Game Traveler Steam Deck Case, Protective Hard Portable Travel Carry Case Shell Pouch with Pockets for Accessories and Game Cases in a Recessed Space - Black",
-        "The Sims 3 Island Paradise - PC/Mac",
-        "Daydayup Carrying Case Compatible with Steam Deck - Fit Charger AC Adapter - with 10 SD Games Cartridges & Stand Hard Shell Travel Pouch for Steam Deck Console & Accessories, Black [Updated Version]"
+        "RollerCoaster Tycoon Gold Edition: RollerCoaster Tycoon / Loopy Landscapes / Corkscrew Follies",
+        "Stream Deck Carrying Case,Game Traveler Steam Deck Case, Protective Hard Portable Travel Carry Case Shell Pouch with Pockets for Accessories and Game Cases in a Recessed Space - Black"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_41234",
-        "doc_535",
-        "doc_6647",
-        "doc_155",
-        "doc_2436"
+        "doc_22771",
+        "doc_17434",
+        "doc_6147",
+        "doc_7091",
+        "doc_19534"
       ],
       "unique_doc_ids_in_top5": 5
     },
     {
       "id": 7,
       "query": "family-friendly party multiplayer on Nintendo Switch",
-      "answer": "Based on the provided reviews and metadata, here are some suggestions for a family-friendly party multiplayer game on the Nintendo Switch:\n\n1. Super Mario Party (B087NMYQYG) - This game is rated 5.0 and described as \"perfect for game night\" by a reviewer, indicating it's a great option for family-friendly multiplayer fun.\n2. Carnival Games (B07HKX4ZV9) - This game is rated 5.0 and praised by a reviewer for its fun multiplayer features, suggesting it's a great option for family game nights.\n\nThese two options seem to fit the description of family-friendly party multiplayer games on the Nintendo Switch.",
+      "answer": "Based on the provided reviews and metadata, it seems that the following games are suitable for family-friendly party multiplayer on Nintendo Switch:\n\n1. Carnival Games Nintendo Switch (ASIN: B07HKX4ZV9) - rated 4.0, with a review stating it's a \"Fun game\".\n2. 1-2 Switch - Nintendo Switch (ASIN: B0714FFZD8) - rated 4.0, with a review stating it's a \"Much better than I expected\" for social settings and parties.\n\nHowever, the Party Arcade - Nintendo Switch (ASIN: B07GMS9P7M) seems to be more geared towards online multiplayer and may not be suitable for family-friendly party play.",
       "retrieved_titles_top5": [
-        "Super Mario Party - Nintendo Switch",
-        "Splatoon 2: Starter Pack - Nintendo Switch",
+        "Party Arcade - Nintendo Switch",
         "Family Party 30 Great Games: Obstacle Arcade - Nintendo Wii U",
-        "My Frend Peppa Pig Complete Edition- Nintendo Switch",
-        "Carnival Games Nintendo Switch"
+        "1-2 Switch - Nintendo Switch",
+        "Carnival Games Nintendo Switch",
+        "1-2 Switch - Nintendo Switch"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_23857",
-        "doc_997",
-        "doc_31002",
-        "doc_701",
-        "doc_34641"
+        "doc_20525",
+        "doc_17118",
+        "doc_3299",
+        "doc_3072",
+        "doc_7557"
       ],
       "unique_doc_ids_in_top5": 5
     },
     {
       "id": 8,
       "query": "Is Minecraft good for creative kids?",
-      "answer": "Based on the provided context, it seems that Minecraft is a good fit for creative kids. \n\nIn the review for \"Minecraft\" (ASIN: B00BU3ZLJQ), the reviewer mentions that it is a \"neat and highly creative idea\" and that it \"encourages creativity.\" This suggests that the game is well-suited for kids who enjoy creative activities.\n\nAdditionally, the review for \"Minecraft - Nintendo Switch\" (ASIN: B07D13QGXM) mentions that the game is \"engrossing\" and a \"fun multi-player game,\" which implies that it may appeal to kids with a creative and imaginative outlook.",
+      "answer": "Based on the reviews, it appears that Minecraft is great for promoting creative thinking in kids. \n\nIn the review for Minecraft – Xbox One (ASIN: B00I6E6SH6), the customer states, \"I think it is a great game and makes kids think!\"\n\nSimilarly, in the review for Minecraft (PS4) (ASIN: B00K2S5PUK), the customer mentions that the game \"promotes creative thinking.\"",
       "retrieved_titles_top5": [
-        "Minecraft",
-        "Disney Universe - Xbox 360",
+        "Minecraft – Xbox One",
+        "Minecraft: Java Edition for PC/Mac [Online Game Code]",
+        "Minecraft: Java Edition for PC/Mac [Online Game Code]",
         "Minecraft - Nintendo Switch",
-        "Godzilla Unleashed - PlayStation 2",
-        "Minecraft – Xbox One"
+        "Minecraft (PS4)"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_32412",
-        "doc_390",
-        "doc_10685",
-        "doc_432",
-        "doc_13408"
+        "doc_1823",
+        "doc_6877",
+        "doc_6495",
+        "doc_9336",
+        "doc_26052"
       ],
       "unique_doc_ids_in_top5": 5
     },
     {
       "id": 9,
       "query": "soulslike or very hard action RPG recommendations",
-      "answer": "Based on the provided context, I would recommend the following \"soulslike\" or very hard action RPG games:\n\n1. Bloodborne Collectors Edition - PlayStation 4 (ASIN: B00NOD0OTW) - This game is described as a \"Souls like\" game with challenging gameplay and a unique twist on the genre. The reviewer praises its combat, boss fights, and narrative, and considers it to be one of the best horror games ever made.\n\n2. (Implicitly) Dark Souls (not explicitly mentioned, but implied as a comparison to Bloodborne, and also mentioned as a game that adapted the fast pace of combat from Bloodborne in its sequel)",
+      "answer": "Based on the context, it seems that the following games are 'soulslike' or very hard action RPGs:\n\n- Bloodborne (ASIN: B01MS1GOAX)\n- Dark Souls III: The Fire Fades Edition (ASIN: B07RFZFNQT)\n\nThese games are mentioned as being very challenging, with Dark Souls III specifically stating that it's not for casual gamers due to its difficulty level.",
       "retrieved_titles_top5": [
-        "Bloodborne Collectors Edition - PlayStation 4",
-        "Space Hack - PC",
-        "Fight Club - PlayStation 2",
-        "Dead Space 3 – PC Origin [Online Game Code]",
-        "Playstation 3 HORI PAD 3 Turbo Wireless - Silver"
+        "Playstation 3 HORI PAD 3 Turbo Wireless - Silver",
+        "Bloodborne - Game Of The Year PS4 Game New (Middle Eastern Version)",
+        "Need for Speed Most Wanted - Xbox 360 (Limited)",
+        "Dark Souls III: The Fire Fades Edition - Xbox One",
+        "Need for Speed Most Wanted - Xbox 360 (Limited)"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_49218",
-        "doc_691",
-        "doc_22004",
-        "doc_883",
-        "doc_15420"
+        "doc_12567",
+        "doc_19244",
+        "doc_6110",
+        "doc_14207",
+        "doc_6925"
       ],
       "unique_doc_ids_in_top5": 5
     },
     {
       "id": 10,
       "query": "best gaming headset under $50 with clear mic for Discord",
-      "answer": "Based on the provided reviews, I recommend the BEAVIIOO Wireless Gaming Headset with Microphone (ASIN: B0BTTHYVBJ) for the best gaming headset under $50 with a clear mic for Discord. \n\nThis headset has a clear mic, works well with Discord, and is budget-friendly, priced at a budget price point.",
+      "answer": "Based on the reviews provided, the best gaming headset under $50 with a clear mic for Discord is the BEAVIIOO Wireless Gaming Headset with Microphone for PC PS4 PS5 (ASIN: B0BTTHYVBJ).\n\nAccording to the review, the BEAVIIOO Wireless Gaming Headset has a clear sound and comes out clear on team apps such as Discord. It also has a mic mute button and a raiseable mic, which suggests that it has a clear and functional microphone.\n\nAdditionally, the review mentions that the headset is a low-cost option, implying that it is priced under $50.\n\nPlease note that the price of the product may have changed since the review was written, but based on the information provided, the BEAVIIOO Wireless Gaming Headset appears to meet the requirements specified in the question.",
       "retrieved_titles_top5": [
+        "AIHOOR Wired Gaming Headset with 7.1 Surround Sound, Detachable Mic, in-Line Volume & Mute Control, RGB LED Lights, Protein Earmuffs, Over-Ear Lightweight Headphone for PC, PS4/PS5 Console (USB Plug)",
         "BEAVIIOO Wireless Gaming Headset with Microphone for PC PS4 PS5 Playstation 4 5, 2.4G Wireless Bluetooth USB Gamer Headphones with Mic for Laptop Computer",
-        "Amazon Basics Gaming Headset with Mic for Xbox One, PS4 and PC - Green",
-        "CORSAIR Void Pro RGB USB Gaming Headset - Dolby 7.1 Surround Sound Headphones for PC - Discord Certified - 50mm Drivers - Carbon",
-        "Dragon War G-HS-002 Beast Professional Gaming Headset with Mic",
-        "HyperX Cloud Revolver S - Gaming Headset with Dolby 7.1 Surround Sound - Steel Frame - Signature Memory Foam - Premium Leatherette - Detachable Noise-Cancellation Microphone"
+        "HyperX Cloud Revolver S - Gaming Headset with Dolby 7.1 Surround Sound - Steel Frame - Signature Memory Foam - Premium Leatherette - Detachable Noise-Cancellation Microphone",
+        "Amazon Basics USB Pro Gaming Headset with Microphone for PC, Red",
+        "PDP Gaming LVL50 Wired Headset With Noise Cancelling Microphone: Black - PS5/PS4"
       ],
       "retrieved_doc_ids_top5": [
-        "doc_14668",
-        "doc_227",
-        "doc_31134",
-        "doc_405",
-        "doc_7367"
+        "doc_2269",
+        "doc_12075",
+        "doc_6740",
+        "doc_8797",
+        "doc_5917"
       ],
       "unique_doc_ids_in_top5": 5
     }
