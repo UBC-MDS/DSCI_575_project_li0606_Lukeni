@@ -1,4 +1,8 @@
-# Single source of truth for pip installs (venv, CI, Streamlit Cloud, and conda via environment.yml).
+# App runtime: pip (Streamlit Community Cloud, venv, CI). See local_env/ for Conda.
+# Linux/Streamlit: CPU wheel from PyTorch index (avoids multi‑GB CUDA packages). macOS/Win: default PyPI.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.2.2+cpu; platform_system == "Linux"
+torch==2.2.2; platform_system != "Linux"
 python-dotenv
 streamlit
 pandas
@@ -11,6 +15,3 @@ faiss-cpu
 langchain
 langchain-core
 langchain-groq
-jupyterlab
-notebook
-ipykernel

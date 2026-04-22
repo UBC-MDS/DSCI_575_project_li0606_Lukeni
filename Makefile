@@ -7,8 +7,8 @@ SHELL := /bin/bash
 PYTHON := $(if $(CONDA_PREFIX),$(CONDA_PREFIX)/bin/python,python3)
 PIP := $(if $(CONDA_PREFIX),$(CONDA_PREFIX)/bin/pip,pip3)
 
-# Must match `name:` in environment.yml (dsci575-ml).
 ENV_NAME := dsci575-ml
+ENV_YML := local_env/environment.yml
 
 APP := app/app.py
 RAW_DIR := data/raw
@@ -30,7 +30,7 @@ RESET := \033[0m
 help:
 	@echo -e "$(YELLOW)DSCI 575 ML — project tasks$(RESET)"
 	@echo "========================================================"
-	@echo -e "  $(GREEN)make install$(RESET)  : Create/update Conda env $(ENV_NAME) from environment.yml"
+	@echo -e "  $(GREEN)make install$(RESET)  : Create/update Conda env $(ENV_NAME) from $(ENV_YML)"
 	@echo -e "  $(GREEN)make raw$(RESET)      : Download Video_Games review + meta JSONL into data/raw/"
 	@echo -e "  $(GREEN)make eval$(RESET)     : Milestone 1 qualitative CSV + Milestone 2 hybrid RAG JSON (needs GROQ_API_KEY)"
 	@echo -e "  $(GREEN)make metrics$(RESET)  : Precision@k, Recall@k, MRR from labeled ground_truth.csv"
@@ -38,10 +38,10 @@ help:
 	@echo -e "  $(GREEN)make clean$(RESET)    : Remove __pycache__, *.pyc, data/raw downloads, data/processed/*"
 	@echo "========================================================"
 
-# --- Environment: sync from environment.yml ---
+# --- Local environment: Conda (see local_env/); remote Streamlit uses root requirements.txt only ---
 install:
 	@echo -e "$(YELLOW)Updating Conda environment ($(ENV_NAME))...$(RESET)"
-	@conda env update -f environment.yml --prune
+	@conda env update -f $(ENV_YML) --prune
 	@echo -e "$(GREEN)Environment ready.$(RESET)"
 	@echo -e "$(YELLOW)Activate with:$(RESET)"
 	@echo -e "    $(GREEN)conda activate $(ENV_NAME)$(RESET)"

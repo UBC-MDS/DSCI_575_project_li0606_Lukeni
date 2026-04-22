@@ -1,0 +1,14 @@
+# Local development only. Streamlit Community Cloud uses the repo root `requirements.txt` (pip) —
+# keep `environment.yml` out of the repository root so Cloud does not prefer conda.
+#
+# Create/update:  conda env update -f local_env/environment.yml --prune | make install
+# Activate:       conda activate dsci575-ml
+name: dsci575-ml
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - -r ../requirements.txt
+      - -r ../requirements-dev.txt

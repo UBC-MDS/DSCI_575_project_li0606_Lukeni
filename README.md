@@ -10,6 +10,8 @@ This project implements retrieval over the **Video Games** category of [Amazon R
 
 **Corpus scope:** The pipeline uses a **review-level** corpus from the Amazon Reviews 2023 **Video_Games** category: **10,000 unique products** and at most **three reviews per product** in the build (typically **~29k–30k** review rows; the exact row count is in `data/processed/video_games_corpus_final.*`). Each document combines product title, categories, features, description, review title, and review text, with the preprocessing described in the scaling notebook. Only this filtered subset is indexed (not the full category JSONL).
 
+**Dependency layout:** Root **`requirements.txt`** is what **Streamlit Community Cloud** and minimal **venv** installs use. **Conda** for local work uses **`local_env/environment.yml`** (invoked by `make install`), which installs `requirements.txt` plus **`requirements-dev.txt`** (Jupyter for notebooks). There is **no** `environment.yml` in the repo root so Cloud does not prefer Conda over pip when both could apply.
+
 ## Outcomes
 
 - **Public Streamlit app:** [Link](https://dsci575li0606lukeni.streamlit.app/) — search (BM25 / dense / hybrid) and RAG over the scaled index.
@@ -18,7 +20,7 @@ This project implements retrieval over the **Video Games** category of [Amazon R
 
 ## Reproducibility (local)
 
-1. **Environment:** `make install` → `conda activate dsci575-ml` (or `python -m venv .venv` + `pip install -r requirements.txt`; see *Setup* below).
+1. **Environment:** `make install` → `conda activate dsci575-ml` (or `venv` + `pip install -r requirements.txt` and `pip install -r requirements-dev.txt` for notebooks; see *Setup*).
 2. **Raw inputs:** `make raw` → `data/raw/Video_Games.jsonl` and `meta_Video_Games.jsonl`.
 3. **Build indices and corpus:** run `notebooks/milestone3_scaling.ipynb` to completion, **or** `python -m src.build_retrievers` — both produce the `*_final` files under `data/processed/`.
 4. **Environment variables:** copy `.env.example` to `.env` and set at least **`GROQ_API_KEY`** for the RAG tab.
@@ -30,8 +32,10 @@ This project implements retrieval over the **Video Games** category of [Amazon R
 ```
 .
 ├── README.md
-├── requirements.txt         # Python dependencies (single source of truth for pip)
-├── environment.yml          # Conda: Python + PyTorch base, then `pip install -r requirements.txt`
+├── requirements.txt         # App / pip / Streamlit Cloud (CPU PyTorch, no Jupyter)
+├── requirements-dev.txt     # Notebooks: Jupyter* (used by `local_env` Conda, optional for venv)
+├── local_env/
+│   └── environment.yml      # Conda (local only): `make install` — not at repo root on purpose
 ├── Makefile                 # shortcuts: install, raw, eval, metrics, dev, clean (see `make help`)
 ├── .env.example             # example environment variables (optional; copy to .env)
 ├── .gitignore               # ignores secrets, raw data, and local processed artifacts (small eval CSVs may be tracked)
@@ -83,18 +87,14 @@ make install
 This runs:
 
 ```bash
-conda env update -f environment.yml --prune
+conda env update -f local_env/environment.yml --prune
 ```
 
-That command **creates** the environment if it is missing, or **updates** it if it already exists; `--prune` removes packages that were dropped from `environment.yml`. Then install the pip stack from `requirements.txt` as specified in the YAML.
-
-After it finishes, activate:
+That **creates** or **updates** the env and, via the YAML, runs **`pip install -r requirements.txt`** and **`pip install -r requirements-dev.txt`**. The root intentionally has **no** `environment.yml` so **Streamlit Community Cloud** only sees `requirements.txt` and uses a lean **pip** install (see *Streamlit Cloud notes* below).
 
 ```bash
 conda activate dsci575-ml
 ```
-
-Equivalent without Make: run `conda env update -f environment.yml --prune` yourself, then `conda activate dsci575-ml`.
 
 #### `venv` (no conda)
 
@@ -102,15 +102,13 @@ Equivalent without Make: run `conda env update -f environment.yml --prune` yours
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+pip install -r requirements-dev.txt   # optional: notebooks
 ```
 
-### 2) Dependencies inside the conda env
+### 2) What gets installed where
 
-`requirements.txt` is the canonical list of pip packages (used for `venv`, CI, Streamlit Cloud, and as the `-r` file for conda). The conda path uses `environment.yml` for a small conda base (Python 3.11, NumPy, PyTorch) and then installs pip dependencies via `make install` / `conda env update` as above. If you already use `venv` only, install with:
-
-```bash
-pip install -r requirements.txt
-```
+- **`requirements.txt`:** app runtime (CPU `torch` wheel, `streamlit`, `sentence-transformers`, `faiss-cpu`, LangChain, etc.) — matches production / Streamlit Cloud.
+- **`requirements-dev.txt`:** Jupyter* — for `notebooks/`; pulled in automatically for **Conda** via `local_env/environment.yml`, optional for **venv** if you do not use notebooks.
 
 ### 3) Environment variables
 
@@ -122,13 +120,22 @@ Copy `.env.example` to `.env` when you need overrides. Do not commit `.env`.
 
 ### 4) Dependency changes after `git pull`
 
-If `requirements.txt` or `environment.yml` changed, refresh the conda env from the repo root (no need to activate first):
+If `requirements.txt`, `requirements-dev.txt`, or `local_env/environment.yml` changed, refresh the conda env (no need to activate first):
 
 ```bash
 make install
 ```
 
-Or manually: `conda env update -f environment.yml --prune`. If you use **venv** only: `pip install -r requirements.txt`.
+Or: `conda env update -f local_env/environment.yml --prune`. **venv:** `pip install -r requirements.txt` and, if you use notebooks, `pip install -r requirements-dev.txt`.
+
+---
+
+## Streamlit Community Cloud (deployment)
+
+- **Why `local_env/environment.yml`:** If both `environment.yml` and `requirements.txt` exist at the **repo root**, Cloud may pick **Conda** and install a large stack; `pip` then pulled a **CUDA-enabled** `torch` in our logs, which blows memory on small instances. Keeping Conda **only** under `local_env/` makes Cloud use **root `requirements.txt`** (pip) with an explicit **CPU** `torch` wheel.
+- **Cold start:** The first request loads `sentence-transformers/all-MiniLM-L6-v2` from Hugging Face (local cache after that). Set optional **`HF_TOKEN`** / **`HUGGINGFACEHUB_API_TOKEN`** in **Secrets** for higher rate limits and faster downloads (see `.env.example`).
+- **Bundling the model in a Release** (like the `*_final` files) *can* reduce first-time download failures, but you must point **Hugging Face cache env vars** at the extracted folder; most teams rely on **HF token + CPU torch** first.
+- **Health check / brief “works then error”:** Logs showed `/script-health-check` **503** / **connection refused** while weights were still loading—too slow for the probe, or the process **OOM**’d. Slimmer dependencies (CPU `torch`, no Jupyter in the Cloud install) and optional HF token address the usual cases.
 
 ---
 
@@ -247,7 +254,7 @@ streamlit run app/app.py
 
 How **Semantic RAG** vs **Hybrid RAG** connect to **build_context** and Groq is shown in the **RAG pipeline** section (workflow diagram above).
 
-Optional: `make install` updates the conda environment **`dsci575-ml`** from `environment.yml` after dependency changes.
+Optional: `make install` updates **`dsci575-ml`** from `local_env/environment.yml` after dependency changes.
 
 ### RAG exploration notebook
 
@@ -292,7 +299,7 @@ PYTHONPATH=. python -m src.evaluation all
 
 ```bash
 make help      # list targets
-make install   # update conda env dsci575-ml from environment.yml
+make install   # conda env dsci575-ml from local_env/environment.yml
 make raw       # download Video_Games JSONL files into data/raw/ (Hugging Face)
 make eval      # qualitative CSV + hybrid RAG JSON (needs GROQ_API_KEY for JSON)
 make metrics   # P@k, R@k, MRR from labeled ground_truth.csv
